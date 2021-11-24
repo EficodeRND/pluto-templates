@@ -9,7 +9,7 @@ function App() {
   useEffect(() => {
     Axios.get(API_URL)
       .then((response) => {
-        setBackendResponse(JSON.stringify(response));
+        setBackendResponse(JSON.stringify(response.data));
       })
       .catch((response) => {
         setBackendResponse(response.status)
