@@ -1,0 +1,58 @@
+name: frontend
+on:
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  frontend-test-lint-build:
+    env:
+      WORKDIR: '.'
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
+
+    - name: Set working-directory to ./frontend if monorepo
+      if: hashFiles('./frontend/package.json') != ''
+      run: |
+        echo "WORKDIR=frontend" >> $GITHUB_ENV
+
+    - name: Set up Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v2
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Cache dependencies
+      uses: actions/cache@v2
+      with:
+        path: |
+          **/node_modules
+        key: ${{ runner.os }}-${{ hashFiles('**/yarn-lock.json') }}
+  
+    - name: Install dependencies
+      working-directory: ${{ env.WORKDIR }}
+      run: yarn install
+
+    - name: Run tests with coverage
+      working-directory: ${{ env.WORKDIR }}
+      run: yarn test --coverage
+
+    - name: Run linting
+      working-directory: ${{ env.WORKDIR }}
+      run: yarn lint
+
+    - name: Audit
+      working-directory: ${{ env.WORKDIR }}
+      run: yarn audit --groups dependencies
+
+    - name: Build
+      working-directory: ${{ env.WORKDIR }}
+      run: yarn build
+    
+

@@ -2,6 +2,7 @@
   "name": "React Frontend with REST backend",
   "description": "This is some js or ts stuff",
   "postActions": [
-    "Add environment variable REACT_APP_BACKEND_API_URL"
+    "Add environment variable REACT_APP_BACKEND_API_URL",
+    "Rename frontend package in package.json"
   ]
 }

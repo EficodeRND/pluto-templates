@@ -1,7 +1,5 @@
 FROM node:14-alpine AS builder
 ENV NODE_ENV production
-ARG BACKEND_API_URL
-ENV REACT_APP_BACKEND_API_URL=${BACKEND_API_URL}
 # Add a work directory
 WORKDIR /app
 # Cache and Install dependencies
