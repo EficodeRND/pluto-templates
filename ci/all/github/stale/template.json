@@ -1,0 +1,5 @@
+{
+  "name": "Github stale action",
+  "description": "Marks pull requests stale when they're over aged",
+  "postActions": []
+}

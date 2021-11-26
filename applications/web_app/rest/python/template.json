@@ -1,0 +1,8 @@
+{
+  "name": "Python Backend with REST API",
+  "description": "This is Flask based Python REST API",
+  "postActions": [
+    "Remember good commit messages",
+    "Remember best practises"
+  ]
+}

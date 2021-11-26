@@ -1,5 +1,5 @@
 {
-  "name": "Python Backend with REST API",
+  "name": "Python Service with socket connections",
   "description": "This is pure Python",
   "postActions": [
     "Remember good commit messages",
