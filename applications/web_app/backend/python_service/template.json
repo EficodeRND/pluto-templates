@@ -1,6 +1,6 @@
 {
   "name": "Python Service with socket connections",
-  "description": "This is pure Python",
+  "description": "Pure Python application with socket api",
   "postActions": [
     "Remember good commit messages",
     "Remember best practises"
