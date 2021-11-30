@@ -3,6 +3,7 @@
   "description": "Pure Python application with socket api",
   "postActions": [
     "Remember good commit messages",
-    "Remember best practises"
+    "Remember best practises",
+    "Tests you must write"
   ]
 }
