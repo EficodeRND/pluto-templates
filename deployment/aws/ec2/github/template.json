@@ -1,0 +1,7 @@
+{
+  "name": "AWS EC2 deployment",
+  "description": "Deploy to traditional EC2 instance",
+  "postActions": [
+    "Harden your servers"
+  ]
+}

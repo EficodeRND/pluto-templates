@@ -1,0 +1,7 @@
+{
+  "name": "Heroku Jenkins",
+  "description": "This deploys your app stack to Heroku using Jenkins",
+  "postActions": [
+    "Configure your Heroku credentials"
+  ]
+}

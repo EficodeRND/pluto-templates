@@ -1,0 +1,7 @@
+{
+  "name": "AWS serverless deployment",
+  "description": "Deploy with serverless model",
+  "postActions": [
+    "Handle your ApiGW properly"
+  ]
+}

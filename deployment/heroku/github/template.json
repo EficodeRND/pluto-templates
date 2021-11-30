@@ -1,0 +1,7 @@
+{
+  "name": "Heroku Github",
+  "description": "This deploys your app stack to Heroku using Github actions",
+  "postActions": [
+    "Configure your Heroku credentials"
+  ]
+}
