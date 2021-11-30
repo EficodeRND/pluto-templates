@@ -1,5 +1,5 @@
 {
   "name": "Robots for Github",
-  "description": "Github Robot Framework acceptance testing",
+  "description": "Robot Framework acceptance testing with Github actions",
   "postActions": []
 }
