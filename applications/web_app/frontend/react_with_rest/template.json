@@ -2,7 +2,20 @@
   "name": "React Frontend with REST backend",
   "description": "This is some js or ts stuff",
   "postActions": [
-    "Add environment variable REACT_APP_BACKEND_API_URL",
+    "Add environment variable REACT_APP_BACKEND_API_URL to the deployment workflow file pointing to a rest backend",
     "Rename frontend package in package.json"
-  ]
+  ],
+  "docker-compose-snippet": {
+    "service-name": {
+      "build": {
+        "context": "",
+        "args": [
+          "REACT_APP_BACKEND_API_URL=${REACT_APP_BACKEND_API_URL}"
+        ]
+      },
+      "ports": [
+        "80:80"
+      ]
+    }
+  }
 }

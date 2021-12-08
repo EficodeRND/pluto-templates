@@ -1,13 +1,16 @@
 FROM node:14-alpine AS builder
-ENV NODE_ENV production
+
+ARG REACT_APP_BACKEND_API_URL
+ENV REACT_APP_BACKEND_API_URL $REACT_APP_BACKEND_API_URL
 # Add a work directory
 WORKDIR /app
 # Cache and Install dependencies
 COPY package.json .
 COPY yarn.lock .
-RUN yarn install --production
+RUN yarn install
 # Copy app files
 COPY . .
+ENV NODE_ENV production
 # Build the app
 RUN yarn build
 
