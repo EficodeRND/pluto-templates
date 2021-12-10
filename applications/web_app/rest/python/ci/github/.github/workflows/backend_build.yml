@@ -1,0 +1,17 @@
+name: Build Python Rest backend
+on:
+  push:
+    branches: [main]
+jobs:
+  build-api:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+      - name:  Build Python REST API
+        run: |
+          for i in $(seq 10)
+          do
+            docker build -f ./rest_python/Dockerfile ./rest_python/ && break 1
+            sleep 1
+          done
