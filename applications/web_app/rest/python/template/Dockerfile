@@ -6,6 +6,7 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 # Install dependencies:
 COPY requirements.txt .
+RUN pip install --upgrade pip
 RUN pip install  --no-cache-dir -r requirements.txt
 
 # Run the application:
