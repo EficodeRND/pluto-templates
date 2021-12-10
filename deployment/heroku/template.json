@@ -1,5 +1,6 @@
 {
   "name": "Heroku",
   "description": "This deploys your app stack to Heroku",
-  "postActions": ['Configure your Heroku credentials']
+  "postActions": ["Configure your Heroku credentials"],
+  "renderTemplate": true
 }
