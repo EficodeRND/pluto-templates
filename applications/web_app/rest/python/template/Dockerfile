@@ -9,6 +9,7 @@ COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install  --no-cache-dir -r requirements.txt
 
-# Run the application:
 COPY . .
-CMD ["invoke", "-c", "prod_tasks", "prodserver"]
+
+# Run the application:
+CMD invoke -c prod_tasks prodserver -p $PORT

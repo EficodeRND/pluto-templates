@@ -3,12 +3,11 @@ from tasks import SRC_PATH, install
 
 
 @task(pre=[install])
-def prodserver(context, daemon=False, unbuffered=True):
+def prodserver(context, port=8080, daemon=False, unbuffered=True):
     daemon = ' --daemon' if daemon else ''
     un_buffer: str = 'TRUE' if unbuffered is True else 'FALSE'
 
     host = '0.0.0.0'
-    port = '8080'
     daemon = daemon
     workers = '5'
     timeout = '3600'

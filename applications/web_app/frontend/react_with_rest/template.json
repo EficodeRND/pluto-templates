@@ -13,6 +13,9 @@
           "REACT_APP_BACKEND_API_URL=${REACT_APP_BACKEND_API_URL}"
         ]
       },
+      "environment": {
+        "PORT": 80
+      },
       "ports": [
         "80:80"
       ]
