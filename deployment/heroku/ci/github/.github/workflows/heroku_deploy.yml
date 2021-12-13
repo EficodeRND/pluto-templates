@@ -1,0 +1,32 @@
+name: 'heroku-deployment'
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Show working directory
+        run: |
+          echo "::`pwd`::"
+      - name: Build, Push and Deploy to Heroku
+        id: heroku
+        uses: snithyanantham/docker-compose-multiple-apps-heroku-deploy@v1.0  # use the latest version of the action
+        with:
+          email: {{ '${{ secrets.HEROKU_EMAIL }}' }} # your heroku email
+          api_key: {{ '${{ secrets.HEROKU_API_KEY }}' }} # your  heroku api key
+          docker_compose_file: './docker-compose.yml' # set the path to the folder where the docker-compose file is located
+          heroku_apps: '{%- set count = namespace(value=0) -%}
+            [{%- for template_name in ctx.values -%}
+              {%- set template = ctx.values[template_name] -%}
+              {%- if template["is_app_template"] -%}
+                {%- set count.value = count.value + 1 -%}
+                {"imagename":"{{template["repository_name"]}}_{{template["template_name"]}}","appname":"{{template["template_name"]}}","apptype":"web"}
+              {%- endif -%}
+              {%- if count.value < template["total_app_templates"] -%}
+                ,
+              {%- endif -%}
+            {%- endfor -%}]'
