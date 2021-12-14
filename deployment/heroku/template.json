@@ -4,7 +4,6 @@
   "postActions": [
     "Add HEROKU_EMAIL to Github repository secrets",
     "Add HEROKU_API_KEY to Github repository secrets",
-    "Add REACT_APP_BACKEND_API_URL to Github repository secrets. It should be the backend app name listed in file .github/workflows/heroku_deploy.yml section heroku_apps",
     "Create applications with names (appname) listed in .github/workflows/heroku_deploy.yml section heroku_apps"],
   "renderTemplate": true
 }

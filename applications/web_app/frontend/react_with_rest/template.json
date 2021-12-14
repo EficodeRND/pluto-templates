@@ -2,7 +2,7 @@
   "name": "React Frontend with REST backend",
   "description": "This is some js or ts stuff",
   "postActions": [
-    "Add environment variable REACT_APP_BACKEND_API_URL to the deployment workflow file pointing to a rest backend",
+    "Add environment variable REACT_APP_BACKEND_API_URL to your build system (ie. Github secrets) pointing to a rest backend",
     "Rename frontend package in package.json"
   ],
   "dockerComposeSnippet": {
