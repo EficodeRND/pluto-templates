@@ -1,6 +1,9 @@
 {
   "name": "Heroku",
   "description": "This deploys your app stack to Heroku",
-  "postActions": ["Configure your Heroku credentials"],
+  "postActions": [
+    "Add HEROKU_EMAIL to Github repository secrets",
+    "Add HEROKU_API_KEY to Github repository secrets",
+    "Create applications with names (appname) listed in .github/workflows/heroku_deploy.yml section heroku_apps"],
   "renderTemplate": true
 }
