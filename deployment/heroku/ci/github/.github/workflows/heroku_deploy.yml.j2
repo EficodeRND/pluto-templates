@@ -7,13 +7,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      REACT_APP_BACKEND_API_URL: ${{ secrets.REACT_APP_BACKEND_API_URL }}
+      BACKEND_API_URL: ${{ secrets.BACKEND_API_URL }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Show working directory
-        run: |
-          echo "::`pwd`::"
       - name: Build, Push and Deploy to Heroku
         id: heroku
         uses: snithyanantham/docker-compose-multiple-apps-heroku-deploy@v1.0  # use the latest version of the action
