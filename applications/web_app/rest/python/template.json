@@ -1,6 +1,6 @@
 {
   "name": "Python Flask backend with REST API",
-  "description": "Pure Python REST API backend implemented with Flask framework",
+  "description": "Pure Python REST API implemented with Flask framework",
   "postActions": [],
   "dockerComposeSnippet": {
     "serviceName": {
