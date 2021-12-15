@@ -1,0 +1,5 @@
+{
+  "name": "AWS EC2 instance",
+  "description": "This deploys your app stack to AWS EC2 instance",
+  "postActions": []
+}

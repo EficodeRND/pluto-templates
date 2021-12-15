@@ -1,0 +1,5 @@
+{
+  "name": "AWS Serverless",
+  "description": "This deploys your app stack to AWS Serverless environment",
+  "postActions": []
+}
