@@ -2,8 +2,7 @@
   "name": "React Frontend with REST backend",
   "description": "This is some js or ts stuff",
   "postActions": [
-    "Add Github secret BACKEND_API_URL pointing to your backend application",
-    "Rename frontend package in package.json"
+    "Add Github secret BACKEND_API_URL pointing to your backend application"
   ],
   "dockerComposeSnippet": {
     "serviceName": {
