@@ -19,8 +19,8 @@ jobs:
           api_key: {{ '${{ secrets.HEROKU_API_KEY }}' }} # your  heroku api key
           docker_compose_file: './docker-compose.yml' # set the path to the folder where the docker-compose file is located
           heroku_apps: '{%- set count = namespace(value=0) -%}
-            [{%- for template_name in ctx.values -%}
-              {%- set template = ctx.values[template_name] -%}
+            [{%- for template_name in ctx.templates -%}
+              {%- set template = ctx.templates[template_name] -%}
               {%- if template["is_app_template"] -%}
                 {%- set count.value = count.value + 1 -%}
                 {%- set appname = ("a" + template["hash"] + "-" + template["template_name"]).replace("_", "-")[:29] -%}
