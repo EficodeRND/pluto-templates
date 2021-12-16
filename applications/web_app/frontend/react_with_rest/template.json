@@ -7,10 +7,12 @@
   "dockerComposeSnippet": {
     "serviceName": {
       "build": {
-        "context": ""
+        "context": "",
+        "args": [
+          "BACKEND_API_URL=${BACKEND_API_URL}"
+        ]
       },
       "environment": {
-        "BACKEND_API_URL": "${BACKEND_API_URL}",
         "PORT": 80
       },
       "ports": [
