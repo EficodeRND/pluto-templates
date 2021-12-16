@@ -8,7 +8,7 @@ init_logging()
 app = Flask(__name__)
 
 
-@app.route('/')
+@app.route('/api')
 def status():
     return 'Hello World!', 200
 
