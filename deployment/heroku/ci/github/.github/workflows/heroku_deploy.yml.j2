@@ -23,8 +23,9 @@ jobs:
               {%- set template = ctx.templates[template_name] -%}
               {%- if template["is_app_template"] -%}
                 {%- set count.value = count.value + 1 -%}
-                {%- set appname = ("a" + template["hash"] + "-" + template["template_name"]).replace("_", "-")[:29] -%}
-                {"imagename":"{{template["repository_name"]}}_{{template["template_name"]}}","appname":"{{appname}}","apptype":"web"}
+                {%- set appname = (("a" + template["hash"] + "-" + template["template_name"]).replace("_", "-")[:29]).lower() -%}
+                {%- set reponame = (template["repository_name"]}}_{{template["template_name"]).lower() -%}
+                {"imagename":"{{reponame}}","appname":"{{appname}}","apptype":"web"}
               {%- endif -%}
               {%- if count.value < template["total_app_templates"] -%}
                 ,
