@@ -5,5 +5,5 @@
 
 # This repository has been configured with the following templates
 {% for template_name in ctx.templates %}
-- {{ template_name }}
+- {{ ctx.templates[template_name]['meta_data']['name'] }}
 {% endfor %}
