@@ -1,10 +1,15 @@
 {
   "name": "Heroku",
   "description": "This deploys your app stack to Heroku",
-  "postActions": [
-    "Create / login to a Heroku account",
-    "Add HEROKU_EMAIL to Github repository secrets",
-    "Add HEROKU_API_KEY to Github repository secrets",
-    "Create applications with names (appname) listed in .github/workflows/heroku_deploy.yml section heroku_apps",
-    "In Github please re-run the Heroku deployment Github Action"]
+  "postActions": {
+    "all": [
+      "Create / login to a Heroku account"
+    ],
+    "github": [
+      "Add HEROKU_EMAIL to Github repository secrets",
+      "Add HEROKU_API_KEY to Github repository secrets",
+      "Create applications with names (appname) listed in .github/workflows/heroku_deploy.yml section heroku_apps",
+      "After everything else is done please re-run the Heroku deployment Github Action"
+    ]
+  }
 }
