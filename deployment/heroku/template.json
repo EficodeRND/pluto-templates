@@ -6,13 +6,15 @@
       "name": "Heroku account email address",
       "description": "Email address for accessing Heroku",
       "type": "email",
-      "storage-location": "ci-secrets"
+      "storage-location": "ci-secrets",
+      "field": "HEROKU_EMAIL"
     },
     {
       "name": "Heroku API key",
       "description": "API key for accessing Heroku",
       "type": "password",
-      "storage-location": "ci-secrets"
+      "storage-location": "ci-secrets",
+      "field": "HEROKU_API_KEY"
     }
   ],
   "postActions": {
