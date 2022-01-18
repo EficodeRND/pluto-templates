@@ -4,7 +4,6 @@
   "appType": "frontend",
   "postActions": {
     "github": [
-      "Add Github secret BACKEND_API_URL pointing to your backend application"
     ]
   },
   "dockerComposeSnippet": {

@@ -1,7 +1,9 @@
+{% if ctx.post_actions|length > 0 %}
 # After creating this repository you need to
 {% for action in ctx.post_actions %}
 - {{ action }}
 {% endfor %}
+{% endif %}
 
 # This repository has been configured with the following templates
 {% for template_name in ctx.templates %}

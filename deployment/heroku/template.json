@@ -6,26 +6,19 @@
       "name": "Heroku account email address",
       "description": "Email address for accessing Heroku",
       "type": "email",
-      "storage-location": "ci-secrets",
+      "target": "ci-secrets",
       "field": "HEROKU_EMAIL"
     },
     {
       "name": "Heroku API key",
       "description": "API key for accessing Heroku",
       "type": "password",
-      "storage-location": "ci-secrets",
+      "target": "ci-secrets",
       "field": "HEROKU_API_KEY"
     }
   ],
   "postActions": {
-    "all": [
-      "Create / login to a Heroku account"
-    ],
-    "github": [
-      "Add HEROKU_EMAIL to Github repository secrets",
-      "Add HEROKU_API_KEY to Github repository secrets",
-      "Create applications with names (appname) listed in .github/workflows/heroku_deploy.yml section heroku_apps",
-      "After everything else is done please re-run the Heroku deployment Github Action"
-    ]
+    "all": [],
+    "github": []
   }
 }
