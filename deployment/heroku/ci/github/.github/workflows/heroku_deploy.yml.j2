@@ -1,33 +1,40 @@
-name: 'heroku-deployment'
+{%- set backend_url = namespace(value='') -%}
+{%- for template_name in ctx.templates -%}
+    {%- set template = ctx.templates[template_name] -%}
+    {%- if template["is_app_template"] -%}
+        {%- do template.update({'heroku_app_name': (("a" + template["hash"] + "-" + template["template_name"]).replace("_", "-")[:29]).lower()}) -%}
+        {%- if template['meta_data'].get('appType', None) == 'backend' and backend_url.value == '' -%}
+            {%- set backend_url.value = 'https://' + template["heroku_app_name"] + '.herokuapp.com' -%}
+        {%- endif -%}
+    {%- endif -%}
+{%- endfor -%}
+name: Heroku Deployment
 on:
   push:
     branches:
       - main
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    env:
-      BACKEND_API_URL: {{ '${{ secrets.BACKEND_API_URL }}' }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Build, Push and Deploy to Heroku
-        id: heroku
-        uses: snithyanantham/docker-compose-multiple-apps-heroku-deploy@v1.0  # use the latest version of the action
-        with:
-          email: {{ '${{ secrets.HEROKU_EMAIL }}' }} # your heroku email
-          api_key: {{ '${{ secrets.HEROKU_API_KEY }}' }} # your  heroku api key
-          docker_compose_file: './docker-compose.yml' # set the path to the folder where the docker-compose file is located
-          heroku_apps: '{%- set count = namespace(value=0) -%}
-            [{%- for template_name in ctx.templates -%}
-              {%- set template = ctx.templates[template_name] -%}
-              {%- if template["is_app_template"] -%}
-                {%- set count.value = count.value + 1 -%}
-                {%- set appname = (("a" + template["hash"] + "-" + template["template_name"]).replace("_", "-")[:29]).lower() -%}
-                {%- set reponame = (template["repository_name"] + '_' + template["template_name"]).lower() -%}
-                {"imagename":"{{reponame}}","appname":"{{appname}}","apptype":"web"}
-              {%- endif -%}
-              {%- if count.value < template["total_app_templates"] -%}
-                ,
-              {%- endif -%}
-            {%- endfor -%}]'
+    herokudeploy:
+      name: Deploy to Heroku
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout the code
+          uses: actions/checkout@v2
+    {%- for template_name in ctx.templates -%}
+        {%- set template = ctx.templates[template_name] -%}
+            {%- if template["is_app_template"] -%}
+            {% set app_name = template["heroku_app_name"] %}
+        - name: Deploy {{app_name}}
+          uses: akhileshns/heroku-deploy@v3.12.12
+          with:
+            heroku_api_key: {{ '${{ secrets.HEROKU_API_KEY }}' }}
+            heroku_app_name: {{app_name}}
+            heroku_email: {{ '${{ secrets.HEROKU_EMAIL }}' }}
+            usedocker: true
+            appdir: {{template["template_name"]}}
+            docker_build_args: |
+              BACKEND_API_URL
+          env:
+            BACKEND_API_URL: '{{backend_url.value}}'
+            {%- endif -%}
+    {%- endfor -%}
