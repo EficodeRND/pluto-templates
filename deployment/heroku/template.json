@@ -15,6 +15,21 @@
       "type": "password",
       "target": "ci-secrets",
       "field": "HEROKU_API_KEY"
+    },
+    {
+      "name": "Heroku Region",
+      "description": "Heroku region where the applications should be deployed to",
+      "type": "list",
+      "target": "template",
+      "field": "HEROKU_REGION",
+      "options": [
+        {"text": "Australia - Sydney", "value": "sydney"},
+        {"text": "Europe - Ireland - Dublin", "value": "dublin"},
+        {"text": "Europe - Germany - Frankfurt", "value": "frankfurt"},
+        {"text": "Japan - Tokyo", "value": "tokyo"},
+        {"text": "United States - Oregon", "value": "oregon"},
+        {"text": "United States - Virginia", "value": "virginia"}
+      ]
     }
   ],
   "postActions": {
