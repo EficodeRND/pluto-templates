@@ -1,34 +1,30 @@
 {
   "name": "Heroku",
-  "description": "This deploys your app stack to Heroku",
+  "description": "Deploy your application stack to Heroku.",
   "inputs": [
     {
       "name": "Heroku account email address",
-      "description": "Email address for accessing Heroku",
+      "description": "Email address for accessing Heroku.",
       "type": "email",
       "target": "ci-secrets",
       "field": "HEROKU_EMAIL"
     },
     {
       "name": "Heroku API key",
-      "description": "API key for accessing Heroku",
+      "description": "API key for accessing Heroku.",
       "type": "password",
       "target": "ci-secrets",
       "field": "HEROKU_API_KEY"
     },
     {
       "name": "Heroku Region",
-      "description": "Heroku region where the applications should be deployed to",
+      "description": "Heroku region where the applications should be deployed.",
       "type": "list",
       "target": "template",
       "field": "HEROKU_REGION",
       "options": [
-        {"text": "Australia - Sydney", "value": "sydney"},
-        {"text": "Europe - Ireland - Dublin", "value": "dublin"},
-        {"text": "Europe - Germany - Frankfurt", "value": "frankfurt"},
-        {"text": "Japan - Tokyo", "value": "tokyo"},
-        {"text": "United States - Oregon", "value": "oregon"},
-        {"text": "United States - Virginia", "value": "virginia"}
+        {"text": "Europe", "value": "eu"},
+        {"text": "United States", "value": "us"}
       ]
     }
   ],
