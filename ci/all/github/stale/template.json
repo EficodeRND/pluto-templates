@@ -1,6 +1,6 @@
 {
-  "name": "Github stale action",
-  "description": "Marks pull requests stale after certain amount of inactivity",
+  "name": "GitHub stale action",
+  "description": "Marks pull requests stale after certain amount of inactivity.",
   "postActions": [
   ]
 }

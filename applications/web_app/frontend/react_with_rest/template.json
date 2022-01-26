@@ -1,6 +1,6 @@
 {
   "name": "React Frontend with REST backend",
-  "description": "This is some js or ts stuff",
+  "description": "This is some js or ts stuff.",
   "appType": "frontend",
   "postActions": {
     "github": [
