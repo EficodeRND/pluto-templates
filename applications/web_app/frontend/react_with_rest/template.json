@@ -1,6 +1,6 @@
 {
   "name": "React Frontend with REST backend",
-  "description": "This is some js or ts stuff.",
+  "description": "React frontend with webpack configurations and Axios REST API client.",
   "appType": "frontend",
   "postActions": {
     "github": [
