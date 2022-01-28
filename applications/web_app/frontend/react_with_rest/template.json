@@ -3,8 +3,7 @@
   "description": "React frontend with webpack configurations and Axios REST API client.",
   "appType": "frontend",
   "postActions": {
-    "github": [
-    ]
+    "GitHub": []
   },
   "dockerComposeSnippet": {
     "serviceName": {
