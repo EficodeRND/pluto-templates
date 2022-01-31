@@ -5,6 +5,9 @@
         {%- do template.update({'heroku_app_name': (("a" + template["hash"] + "-" + template["template_name"]).replace("_", "-")[:29]).lower()}) -%}
         {%- if template['meta_data'].get('appType', None) == 'backend' and backend_url.value == '' -%}
             {%- set backend_url.value = 'https://' + template["heroku_app_name"] + '.herokuapp.com' -%}
+            {%- do add_return_value('backend_url', {'value': backend_url.value, 'display_text': 'Backend URL'}) -%}
+        {%- elif template['meta_data'].get('appType', None) == 'frontend' -%}
+            {%- do add_return_value('url', {'value': 'https://' + template["heroku_app_name"] + '.herokuapp.com', 'display_text': 'Application URL'}) -%}
         {%- endif -%}
     {%- endif -%}
 {%- endfor -%}
@@ -30,7 +33,7 @@ jobs:
             heroku_api_key: {{ '${{ secrets.HEROKU_API_KEY }}' }}
             heroku_app_name: {{app_name}}
             heroku_email: {{ '${{ secrets.HEROKU_EMAIL }}' }}
-            region: {{ctx.templates['deployment_heroku']['parameters']['HEROKU_REGION']}}
+            region: {{ctx.current_template['parameters']['HEROKU_REGION']}}
             usedocker: true
             appdir: {{template["template_name"]}}
             docker_build_args: |
