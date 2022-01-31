@@ -33,7 +33,7 @@ jobs:
             heroku_api_key: {{ '${{ secrets.HEROKU_API_KEY }}' }}
             heroku_app_name: {{app_name}}
             heroku_email: {{ '${{ secrets.HEROKU_EMAIL }}' }}
-            region: {{ctx.templates['deployment_heroku']['parameters']['HEROKU_REGION']}}
+            region: {{ctx.current_template['parameters']['HEROKU_REGION']}}
             usedocker: true
             appdir: {{template["template_name"]}}
             docker_build_args: |
