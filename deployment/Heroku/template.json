@@ -23,13 +23,19 @@
       "target": "template",
       "field": "HEROKU_REGION",
       "options": [
-        {"text": "Europe", "value": "eu"},
-        {"text": "United States", "value": "us"}
+        {
+          "text": "Europe",
+          "value": "eu"
+        },
+        {
+          "text": "United States",
+          "value": "us"
+        }
       ]
     }
   ],
   "postActions": {
     "all": [],
-    "github": []
+    "GitHub": []
   }
 }
