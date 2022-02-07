@@ -24,5 +24,6 @@ COPY --from=builder /app/build /usr/share/nginx/html
 # Add your nginx.conf
 COPY nginx.conf /etc/nginx/conf.d/default.conf.template
 
+RUN /bin/sh -c "envsubst '\$BACKEND_API_URL' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf"
 # Start nginx
-CMD /bin/sh -c "envsubst '\$PORT,\$BACKEND_API_URL' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf" && nginx -g 'daemon off;'
+CMD nginx -g 'daemon off;'
