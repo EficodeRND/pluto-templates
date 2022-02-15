@@ -13,6 +13,15 @@ def status():
     return 'Hello World!', 200
 
 
+# No caching at all for API endpoints.
+@app.after_request
+def add_header(response):
+    response.headers["Cache-Control"] = "no-cache, no-store, must-revalidate"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
+
+
 def start_dev_server():
     app.run("0.0.0.0", port=8080, debug=True)
 
