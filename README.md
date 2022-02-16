@@ -350,6 +350,124 @@ In the template.json it is possible to define inputs needed for the templates.
     }
   ]
 ```
-## Jinja2 Templating
-Documentation for the Jinja2 template language can be found from https://jinja.palletsprojects.com/en/3.0.x/templates/
 
+## Jinja2 Templating
+Template repositories supports Jinja2 templating. Any file under the template folder or under the template
+folder subdirectories that ends with `.j2` extension are handled by the Sprout as Jinja2 template.
+Documentation for the Jinja2 template language can be found from
+[Template Designer Documentation](https://jinja.palletsprojects.com/en/3.0.x/templates/)
+
+In addition to the basic Jinja2 templating engine the Sprout supports `jinja2.ext.do` extension. More about Jinja2
+extensions can be found from [Extensions](https://jinja.palletsprojects.com/en/3.0.x/extensions/)
+
+The Sprout provides the Jinja2 templates with certain amount of context information. The information contains for
+example values that the user has entered to the template inputs by using the Sprout UI. More about available
+values can be found from [Template context values](#template-context-values)
+
+It is also possible to return values from the Jinja2 templates to the Sprout. This can be used for example
+displaying the deployed application URLs on the repository details in Sprout UI. More information about return values
+can be found from [Template return values](#template-return-values)
+
+### Template context values
+On the top level of the template context the following fields are available
+- current_template
+  - The template variables of the current template being executed
+- template_variables
+  - An array of template variables. Contains variables for all templates selected for this execution
+
+On the template these values can be accessed in following way
+```
+{{ctx.current_template['parameters']['HEROKU_REGION']}}
+{{ctx.template_variables['Heroku']['parameters']['HEROKU_REGION']}}
+```
+
+#### template_variables
+Template variables can be retrieved from the template context by addressing the
+template_variables dictionary with the template name
+
+- repository_name
+  - The name of the repository to be created
+- template_name
+  - Name of the template itself
+- template_root
+  - Path to the template root in the checked out template repository
+- template_path
+  - Full path to the template directory in the checked out template repository
+- template_target_dir
+  - Path to the folder for the new repository being created
+- template_type
+  - The type of the template ('applications', 'ci', 'deployment')
+- is_app_template
+  - Boolean value whether the template type is 'applications' or not
+- meta_data
+  - Complete meta data contents for the template
+- parameters
+  - The user entered values for the template inputs
+- hash
+  - 8 character hash generated for the template execution for this exact template
+- total_app_templates
+  - How many 'applications' type templates are involved in this templating run
+
+### Template return values
+It is possible to return values from the template processing. The information returned is stored in to the
+Sprout database as information related to the created repository. This way Sprout is able to present for example
+deployed application URLs in the repository details of the Sprout UI.
+
+return values can be added by using the Jinja2 do extension with the following syntax
+
+```
+{%- do add_return_value('value_name', {'value': 'return value', 'display_text': 'Desired text'}) -%}
+```
+
+For example:
+```
+{%- do add_return_value('url', {'value': 'https://' + template["heroku_app_name"] + '.herokuapp.com', 'display_text': 'Application URL'}) -%}
+```
+
+### Complete template file example
+```
+{%- set backend_url = namespace(value='') -%}
+{%- for template_name in ctx.templates -%}
+    {%- set template = ctx.templates[template_name] -%}
+    {%- if template["is_app_template"] -%}
+        {%- do template.update({'heroku_app_name': (("a" + template["hash"] + "-" + template["template_name"]).replace("_", "-")[:29]).lower()}) -%}
+        {%- if template['meta_data'].get('appType', None) == 'backend' and backend_url.value == '' -%}
+            {%- set backend_url.value = 'https://' + template["heroku_app_name"] + '.herokuapp.com' -%}
+            {%- do add_return_value('backend_url', {'value': backend_url.value, 'display_text': 'Backend URL'}) -%}
+        {%- elif template['meta_data'].get('appType', None) == 'frontend' -%}
+            {%- do add_return_value('url', {'value': 'https://' + template["heroku_app_name"] + '.herokuapp.com', 'display_text': 'Application URL'}) -%}
+        {%- endif -%}
+    {%- endif -%}
+{%- endfor -%}
+name: Heroku Deployment
+on:
+  push:
+    branches:
+      - main
+jobs:
+    herokudeploy:
+      name: Deploy to Heroku
+      runs-on: ubuntu-latest
+      steps:
+        - name: Checkout the code
+          uses: actions/checkout@v2
+    {%- for template_name in ctx.templates -%}
+        {%- set template = ctx.templates[template_name] -%}
+            {%- if template["is_app_template"] -%}
+            {% set app_name = template["heroku_app_name"] %}
+        - name: Deploy {{app_name}}
+          uses: akhileshns/heroku-deploy@v3.12.12
+          with:
+            heroku_api_key: {{ '${{ secrets.HEROKU_API_KEY }}' }}
+            heroku_app_name: {{app_name}}
+            heroku_email: {{ '${{ secrets.HEROKU_EMAIL }}' }}
+            region: {{ctx.current_template['parameters']['HEROKU_REGION']}}
+            usedocker: true
+            appdir: {{template["template_name"]}}
+            docker_build_args: |
+              BACKEND_API_URL
+          env:
+            BACKEND_API_URL: '{{backend_url.value}}'
+            {%- endif -%}
+    {%- endfor -%}
+```
