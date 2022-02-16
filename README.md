@@ -7,10 +7,21 @@ to the desired target.
 Templates follow the best practises for the languages, language frameworks, version control, Devops way of working
 and the deployment target systems.
 
+All templates require a metadata file to provide additional information about the template. More information about the
+metadata file can be found from the section [Template metadata file](#template-metadata-file)
+
+Any combination of selected templates also produce a docker-compose.yml that can be used for running the development
+environment locally or as a basis for deploying the system to target environments.
+More about the Docker and docker-compose can be found from the [Docker Documentation](https://docs.docker.com/)
+
 Templates may utilise Jinja2 templating language for structuring the files of the generated repository contents.
 More information about Jinja2 templating in Sprout can be found from the section [Jinja2 Templating](#jinja2-templating)
 Any file ending with `.j2` extension under template folder or in sub folders of it (folder with `template.json` file)
 will be treated as Jinja2 template.
+
+Templates may require inputs from the user. Sprout provides a mechanism that allows templates to ask for such
+information. More on defining the required inputs for a template can be found from
+[Defining inputs for the templates](#defining-inputs-for-the-templates) 
 
 ## Template repository structure
 
@@ -83,7 +94,7 @@ Here's an example of functional template repository structure
 │       └── web_app                                                 # CI templates for the app type 'web_app'
 │           └── acceptance                                          # Acceptance test templates
 │               └── GitHub                                          # Acceptance test template for GitHub
-│                   ├── robot_framework                             # Template for running Robot Framework on GitHub
+│                   └── robot_framework                             # Template for running Robot Framework on GitHub
 │                       ├── ...                                     # Files & folders to copy to the new repo root
 │                       └── template.json                           # Template meta data file
 └── deployment                                                      # Deployment templates
@@ -150,7 +161,7 @@ In addition to these folders the deployment template must have the template meta
 the meta data file can be found from the section [Template meta data file](#template-meta-data-file)
 
 ## Application template structure
-Inside the category folder (e.g. 'frontend' or 'rest') lies the actual component templates. The component directory
+Inside the category folder (e.g. 'frontend' or 'rest') lays the actual component templates. The component directory
 can be named in any way. In the example we will use 'react_with_rest' for the frontend
 and 'python' for the rest backend.
 
@@ -170,8 +181,124 @@ Any file ending with `.j2` extension under template folder or in sub folders of 
 will be treated as Jinja2 template. More information about Jinja2 templating can be found from the section
 [Jinja2 Templating](#jinja2-templating)
 
-## Template meta data file
-Template meta data file defines information about the template.
+## Template metadata file
+Template metadata file defines information about the template. Metadata is used together with the directory structure
+to form the structure of the templates both in the UI and in the backend logic.
+
+### Mandatory fields for all template metadata files
+- name: The name of the template (presented in the UI)
+- description: The long description of the template (presented in the UI)
+- postActions: A JSON object listing any required actions that should be taken after the repository has been created.
+May be `null` or an empty object. More information about post actions can be found from the section
+[Defining post actions](#defining-post-actions)
+
+### Additional mandatory fields for application templates
+- appType: The application type. Current allowed values are 'backend' and 'frontend'
+- dockerComposeSnippet: A snippet of docker-compose file (in JSON format) that makes this component work when building
+with docker-compose. More information about docker-compose can be found from
+[Overview of Docker Compose](https://docs.docker.com/compose/)
+
+Example application template metadata file
+```
+{
+  "name": "Python Flask backend with REST API",
+  "description": "Pure Python REST API implemented with Flask framework.",
+  "appType": "backend",
+  "postActions": null,
+  "dockerComposeSnippet": {
+    "serviceName": {
+      "build": {
+        "context": ""
+      },
+      "environment": {
+        "PORT": 8080
+      },
+      "ports": [
+        "8080:8080"
+      ]
+    }
+  }
+}
+```
+
+### Additional mandatory fields for ci templates
+There is no other mandatory fields than those that are mandatory for all template metadata files for the ci templates.
+
+Example ci template metadata file
+```
+{
+  "name": "GitHub stale action",
+  "description": "Marks pull requests stale after certain amount of inactivity.",
+  "postActions": {}
+}
+```
+### Additional mandatory fields for deployment templates
+There is no other mandatory fields than those that are mandatory for all template metadata files for the deployment
+templates.
+
+Example deployment template metadata file
+```
+{
+  "name": "Heroku",
+  "description": "Deploy your application stack to Heroku.",
+  "inputs": [
+    {
+      "name": "Heroku account email address",
+      "description": "Email address for accessing Heroku.",
+      "type": "email",
+      "target": "ci-secrets",
+      "field": "HEROKU_EMAIL"
+    },
+    {
+      "name": "Heroku API key",
+      "description": "API key for accessing Heroku.",
+      "type": "password",
+      "target": "ci-secrets",
+      "field": "HEROKU_API_KEY"
+    },
+    {
+      "name": "Heroku Region",
+      "description": "Heroku region where the applications should be deployed.",
+      "type": "list",
+      "target": "template",
+      "field": "HEROKU_REGION",
+      "options": [
+        {
+          "text": "Europe",
+          "value": "eu"
+        },
+        {
+          "text": "United States",
+          "value": "us"
+        }
+      ]
+    }
+  ],
+  "postActions": {
+    "all": [],
+    "GitHub": []
+  }
+}
+```
+
+### Defining post actions
+Required manual post actions (if any) can be defined in the template metadata file. The post actions are listed both in
+the Sprout UI on the summary page before and after creating a new repository and with the default README.md.j2
+template in .templating/README.md.j2 they are also generated into the README file created to the new repository.
+
+Post actions are deinfed as a JSON object in the template.json file. The post actions can have both generic and
+ci provider specific sections.
+
+Post actions are not mandatory and in such case they can be specified as `null` or as empty JSON object in the metadata
+file.
+
+Example definition of the post actions
+```
+"postActions": {
+    "all": ['Follow best practises', 'Remember to write tests'],
+    "GitHub": ['Keep your eye on the Dependabot alerts']
+  }
+```
 
 ### Defining inputs for the templates
 
