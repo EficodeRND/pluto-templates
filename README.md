@@ -41,37 +41,37 @@ deployment
 Here's an example of functional template repository structure
 ```
 .
-├── .templating                                                     # Generic template files for all repositories
-│   ├── .gitignore.template                                         # Template creating .gitignore for the repository
-│   ├── README.md.j2                                                # README.md template for the repo. Jinja2 template
-│   └── docker-compose.template.yml                                 # Things that every docker-compose should contain
-├── README.md                                                       # This README file
-├── applications                                                    # 'applications' folder (component/tab in Sprout UI)
-│   └── web_app                                                     # Application type 'web-app'
-│       ├── frontend                                                # Application category 'frontend'
-│       │   └── react_with_rest                                     # Application template 'react_with_rest'
-│       │       ├── ci                                              # Application CI pipeline templates
-│       │       │   └── GitHub                                      # CI templates for GitHub
-│       │       │       └── .github                                 # Files & folders to copy to the new repo root
+├── .templating                                          # Generic template files for all repositories
+│   ├── .gitignore.template                              # Template creating .gitignore for the repository
+│   ├── README.md.j2                                     # README.md template for the repo. Jinja2 template
+│   └── docker-compose.template.yml                      # Things that every docker-compose should contain
+├── README.md                                            # This README file
+├── applications                                         # 'applications' folder (component/tab in Sprout UI)
+│   └── web_app                                          # Application type 'web-app'
+│       ├── frontend                                     # Application category 'frontend'
+│       │   └── react_with_rest                          # Application template 'react_with_rest'
+│       │       ├── ci                                   # Application CI pipeline templates
+│       │       │   └── GitHub                           # CI templates for GitHub
+│       │       │       └── .github                      # Files & folders to copy to the new repo root
 │       │       │           └── workflows
-│       │       │               └── frontend-test-lint-build.yml.j2 # Files with .j2 are treated as Jinja2 template file  
-│       │       ├── template                                        # Actual application template source code
+│       │       │               └── front...build.yml.j2 # Files with .j2 are treated as Jinja2 template file  
+│       │       ├── template                             # Actual application template source code
 │       │       │   ├── .env.development
 │       │       │   ├── .gitignore
 │       │       │   ├── Dockerfile
 │       │       │   ├── README.md
 │       │       │   ├── nginx.conf
-│       │       │   ├── package.json.j2                             # Files with .j2 are treated as Jinja2 template file
+│       │       │   ├── package.json.j2                  # Files with .j2 are treated as Jinja2 template file
 │       │       │   ├── ...
-│       │       └── template.json                                   # Template meta data file
-│       └── rest                                                    # Application type 'rest'
-│           └── python                                              # Application template 'python'  
-│               ├── ci                                              # Application CI pipeline templates
-│               │   └── GitHub                                      # CI templates for GitHub
-│               │       └── .github                                 # Files & folders to copy to the new repo root
+│       │       └── template.json                        # Template meta data file
+│       └── rest                                         # Application type 'rest'
+│           └── python                                   # Application template 'python'  
+│               ├── ci                                   # Application CI pipeline templates
+│               │   └── GitHub                           # CI templates for GitHub
+│               │       └── .github                      # Files & folders to copy to the new repo root
 │               │           └── workflows
 │               │               └── backend_build.yml
-│               ├── template                                        # Actual application template source code
+│               ├── template                             # Actual application template source code
 │               │   ├── .gitignore
 │               │   ├── Dockerfile
 │               │   ├── prod_tasks.py
@@ -79,36 +79,36 @@ Here's an example of functional template repository structure
 │               │   ├── rest_api.py
 │               │   ├── tasks.py
 │               │   └── ...
-│               └── template.json                                   # Template meta data file
-├── ci                                                              # Generic CI templates
-│   ├── all                                                         # Application type independend CI templates
-│   │   └── GitHub                                                  # CI templates for GitHub
-│   │       └── stale                                               # Template for 'stale' action  
-│   │           ├── template                                        # Template source code
-│   │           │   └── .github                                     # Files & folders to copy to the new repo root
+│               └── template.json                        # Template meta data file
+├── ci                                                   # Generic CI templates
+│   ├── all                                              # Application type independend CI templates
+│   │   └── GitHub                                       # CI templates for GitHub
+│   │       └── stale                                    # Template for 'stale' action  
+│   │           ├── template                             # Template source code
+│   │           │   └── .github                          # Files & folders to copy to the new repo root
 │   │           │       └── workflows
 │   │           │           ├── README.md
 │   │           │           └── stale.yml
-│   │           └── template.json                                   # Template meta data file
-│   └── applications                                                # Application type specific CI templates
-│       └── web_app                                                 # CI templates for the app type 'web_app'
-│           └── acceptance                                          # Acceptance test templates
-│               └── GitHub                                          # Acceptance test template for GitHub
-│                   └── robot_framework                             # Template for running Robot Framework on GitHub
-│                       ├── ...                                     # Files & folders to copy to the new repo root
-│                       └── template.json                           # Template meta data file
-└── deployment                                                      # Deployment templates
-    └── Heroku                                                      # Deployment templates for 'Heroku'
-        ├── ci                                                      # CI templates for running Heroku deployment
-        │   ├── GitHub                                              # CI depoyment template for GitHub
-        │   │   └── .github                                         # Files & folders to copy to the new repo root
+│   │           └── template.json                        # Template meta data file
+│   └── applications                                     # Application type specific CI templates
+│       └── web_app                                      # CI templates for the app type 'web_app'
+│           └── acceptance                               # Acceptance test templates
+│               └── GitHub                               # Acceptance test template for GitHub
+│                   └── robot_framework                  # Template for running Robot Framework on GitHub
+│                       ├── ...                          # Files & folders to copy to the new repo root
+│                       └── template.json                # Template meta data file
+└── deployment                                           # Deployment templates
+    └── Heroku                                           # Deployment templates for 'Heroku'
+        ├── ci                                           # CI templates for running Heroku deployment
+        │   ├── GitHub                                   # CI depoyment template for GitHub
+        │   │   └── .github                              # Files & folders to copy to the new repo root
         │   │       └── workflows
-        │   │           └── heroku_deploy.yml.j2                    # Files with .j2 are treated as Jinja2 template file
+        │   │           └── heroku_deploy.yml.j2         # Files with .j2 are treated as Jinja2 template file
         │   └── Jenkins
-        │       ├── Jenkinsfile                                     # CI depoyment template for Jenkins
-        │       └── template                                        # Template source code (call from the pipeline)
-        │           └── ...                                         # Files & folders to copy to the new repo root
-        └── template.json                                           # Template meta data file
+        │       ├── Jenkinsfile                          # CI depoyment template for Jenkins
+        │       └── template                             # Template source code (call from the pipeline)
+        │           └── ...                              # Files & folders to copy to the new repo root
+        └── template.json                                # Template meta data file
 ```
 
 ### .templating
