@@ -10,9 +10,17 @@ and the deployment target systems.
 All templates require a metadata file to provide additional information about the template. More information about the
 metadata file can be found from the section [Template metadata file](#template-metadata-file)
 
-Any combination of selected templates also produce a docker-compose.yml that can be used for running the development
-environment locally or as a basis for deploying the system to target environments.
-More about the Docker and docker-compose can be found from the [Docker Documentation](https://docs.docker.com/)
+Any combination of selected templates also produce a docker-compose.yml as long as the templates define the needed
+information for the docker-compose.yml generation. More information about the needed configurations
+can be found from the section
+[Additional optional fields for application templates](#additional-optional-fields-for-application-templates)
+
+Docker and docker-compose makes it easy to deliver portable development environment, and they may be used to deploy the
+solution to e.g. test and production environments.
+
+docker-compose.yml can be used for running the development environment locally or as a way to deploy the system to
+target environments. More about the Docker and docker-compose can be found from the 
+[Docker Documentation](https://docs.docker.com/)
 
 Templates may utilise Jinja2 templating language for structuring the files of the generated repository contents.
 More information about Jinja2 templating in Sprout can be found from the section [Jinja2 Templating](#jinja2-templating)
@@ -194,9 +202,16 @@ May be `null` or an empty object. More information about post actions can be fou
 
 ### Additional mandatory fields for application templates
 - appType: The application type. Current allowed values are 'backend' and 'frontend'
+
+### Additional optional fields for application templates
 - dockerComposeSnippet: A snippet of docker-compose file (in JSON format) that makes this component work when building
 with docker-compose. More information about docker-compose can be found from
 [Overview of Docker Compose](https://docs.docker.com/compose/)
+
+If dockerComposeSnippet is defined there also must be working Dockerfile for the template. It is a strong
+recommendation to have both Dockerfile and dockerComposeSnippet defined for any template that is suitable
+to run in Docker. Defining Dockerfile and dockerComposeSnippet makes it easy to deliver portable development
+environment, and they may be used to deploy the solution to e.g. test and production environments.
 
 Example application template metadata file
 ```
