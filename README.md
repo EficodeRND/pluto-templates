@@ -385,6 +385,8 @@ can be found from [Template return values](#template-return-values)
 
 ### Template context values
 On the top level of the template context the following fields are available
+- variables
+  - Template run variables
 - current_template
   - The template variables of the current template being executed
 - template_variables
@@ -395,6 +397,14 @@ On the template these values can be accessed in following way
 {{ctx.current_template['parameters']['HEROKU_REGION']}}
 {{ctx.template_variables['Heroku']['parameters']['HEROKU_REGION']}}
 ```
+
+#### variables
+- run_hash
+  - 8 character hash generated for this templating execution
+- app_templates
+  - List of only app templates
+- total_app_templates
+  - How many 'applications' type templates are involved in this templating run
 
 #### template_variables
 Template variables can be retrieved from the template context by addressing the
@@ -420,8 +430,7 @@ template_variables dictionary with the template name
   - The user entered values for the template inputs
 - hash
   - 8 character hash generated for the template execution for this exact template
-- total_app_templates
-  - How many 'applications' type templates are involved in this templating run
+  
 
 ### Template return values
 It is possible to return values from the template processing. The information returned is stored in to the
