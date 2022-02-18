@@ -35,7 +35,9 @@ jobs:
             heroku_email: {{ '${{ secrets.HEROKU_EMAIL }}' }}
             region: {{ctx.current_template['parameters']['HEROKU_REGION']}}
             usedocker: true
+            {% if template["total_app_templates"] > 1 %}
             appdir: {{template["template_name"]}}
+            {% endif %}
             docker_build_args: |
               BACKEND_API_URL
           env:
