@@ -1,6 +1,7 @@
 {
   "name": "Python Flask backend with REST API",
   "description": "Pure Python REST API implemented with Flask framework.",
+  "documentationUrl": "https://github.com/EficodeEntDemo/pluto-templates/blob/main/applications/web_app/rest/python/template/README.md",
   "appType": "backend",
   "postActions": null,
   "dockerComposeSnippet": {
