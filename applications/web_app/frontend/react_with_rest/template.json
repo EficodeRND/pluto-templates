@@ -1,7 +1,10 @@
 {
   "name": "React Frontend with REST backend",
   "description": "React frontend with webpack configurations and Axios REST API client.",
-  "documentationUrl": "https://github.com/EficodeEntDemo/pluto-templates/blob/main/applications/web_app/frontend/react_with_rest/template/README.md",
+  "documentation": [
+    "https://reactjs.org/",
+    "applications/web_app/frontend/react_with_rest/template/README.md"
+  ],
   "appType": "frontend",
   "postActions": {
     "GitHub": []
