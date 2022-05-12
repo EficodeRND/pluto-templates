@@ -44,6 +44,7 @@ On the top level there is always the following directory structure
 applications
 ci
 deployment
+projects
 ```
 
 Here's an example of functional template repository structure
@@ -55,8 +56,11 @@ Here's an example of functional template repository structure
 │   └── docker-compose.template.yml                      # Things that every docker-compose should contain
 ├── README.md                                            # This README file
 ├── applications                                         # 'applications' folder (component/tab in Sprout UI)
+│   ├── component.json                                   # Meta data for the component folder (optional, contains description)
 │   └── web_app                                          # Application type 'web-app'
-│       ├── frontend                                     # Application category 'frontend'
+│       ├── type.json                                    # Meta data for the type folder (optional, contains description)
+│       │── frontend                                     # Application category 'frontend'
+│       │   ├── category.json                            # Meta data for the category folder (optional, contains description)
 │       │   └── react_with_rest                          # Application template 'react_with_rest'
 │       │       ├── ci                                   # Application CI pipeline templates
 │       │       │   └── GitHub                           # CI templates for GitHub
@@ -105,18 +109,24 @@ Here's an example of functional template repository structure
 │                   └── robot_framework                  # Template for running Robot Framework on GitHub
 │                       ├── ...                          # Files & folders to copy to the new repo root
 │                       └── template.json                # Template meta data file
-└── deployment                                           # Deployment templates
-    └── Heroku                                           # Deployment templates for 'Heroku'
-        ├── ci                                           # CI templates for running Heroku deployment
-        │   ├── GitHub                                   # CI depoyment template for GitHub
-        │   │   └── .github                              # Files & folders to copy to the new repo root
-        │   │       └── workflows
-        │   │           └── heroku_deploy.yml.j2         # Files with .j2 are treated as Jinja2 template file
-        │   └── Jenkins
-        │       ├── Jenkinsfile                          # CI depoyment template for Jenkins
-        │       └── template                             # Template source code (call from the pipeline)
-        │           └── ...                              # Files & folders to copy to the new repo root
-        └── template.json                                # Template meta data file
+├── deployment                                           # Deployment templates
+│   └── Heroku                                           # Deployment templates for 'Heroku'
+│       ├── ci                                           # CI templates for running Heroku deployment
+│       │   ├── GitHub                                   # CI depoyment template for GitHub
+│       │   │   └── .github                              # Files & folders to copy to the new repo root
+│       │   │       └── workflows
+│       │   │           └── heroku_deploy.yml.j2         # Files with .j2 are treated as Jinja2 template file
+│       │   └── Jenkins
+│       │       ├── Jenkinsfile                          # CI depoyment template for Jenkins
+│       │       └── template                             # Template source code (call from the pipeline)
+│       │           └── ...                              # Files & folders to copy to the new repo root
+│       └── template.json                                # Template meta data file
+└── projects                                             # Project creation templates
+    └── atlassian                                        # Templates for Atlassian stack
+        └── jira                                         # Template for Jira project creation
+            ├── template                                 # Template source code (called by the Sprout tempate executor)
+            │   └── create_jira_project.py               # Python 3 or a shell script executed by the Sprout executor
+            └── template.json                            # Template meta data file
 ```
 
 ### .templating
@@ -129,7 +139,13 @@ there)
 More information about Jinja2 templating in Sprout can be found from the section [Jinja2 Templating](#jinja2-templating)
 
 ### applications
-The actual application / component templates are under 'applications' folder. Inside the folder are the available
+The actual application / component templates are under 'applications' folder.
+The folder may contain file named `component.json` which provides user-friendly description of the folder
+```
+{"description": "Applications"}
+```
+
+Inside the folder are the available
 application types for this template repository. For example there could be:
 
 ```
@@ -168,12 +184,41 @@ any shell scripts you may need to call from the CI pipeline.
 In addition to these folders the deployment template must have the template meta data file `template.json` More about
 the meta data file can be found from the section [Template meta data file](#template-meta-data-file)
 
+### projects
+'projects' folder contains templates for the project level templating. They can be selected for execution after a
+project has been created in the Sprout and they provide additional configuration options for the projects like
+creating a Jira board for the project or adding an binary store for the project (like Artifactory).
+
+Project level templates are executed by the Sprout Executor instead of the CI pipeline. The 'projects' folder structure
+follows the same conventions as the other template folders. More information on the Sprout Executor templates can
+be found from [The Sprout Executor templates](executor_templates.md)
+
 ## Application template structure
-Inside the category folder (e.g. 'frontend' or 'rest') lays the actual component templates. The component directory
+The applications folder contains different application type folders like `web_app`. It may also have a file
+named `component.json` which provides user-friendly description of the component.
+```
+{"description": "Applications"}
+```
+
+The type folder may contain a file named `type.json` which provides user-friendly description
+of the type.
+
+```
+{"description": "Web Applications"}
+```
+
+The type folder contains folders for different template categories (e.g. 'frontend' or 'rest')
+The category folder may contain a file named `category.json` which provides user-friendly description
+of the category.
+```
+{"description": "REST API Backends"}
+```
+
+Inside the category folder (e.g. 'frontend' or 'rest') lays the actual component templates. The template directory
 can be named in any way. In the example we will use 'react_with_rest' for the frontend
 and 'python' for the rest backend.
 
-The component template consists of folders 'ci', 'template' and a template meta data file. More about
+The component template consists of folders 'ci', 'template' and a template meta data file `template.json`. More about
 the meta data file can be found from the section [Template meta data file](#template-meta-data-file)
 
 Folder named 'ci' holds the CI provider specific folders. In provider specific folders are
@@ -328,6 +373,7 @@ In the template.json it is possible to define inputs needed for the templates.
 - target: The target of the input 
   - only passed for the template processing: 'template'
   - create e.g. GitHub secret with this key and value: 'ci-secrets'
+  - Only passed as an environment variable to a executor template: 'executor'
 - field: The field name (or secrets key) for the input
 
 ```
