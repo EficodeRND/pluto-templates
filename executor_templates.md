@@ -75,6 +75,48 @@ by using that environment variable is the `executable_name.result.json` e.g. `cr
 By using the value from the environment variable to create the result file enables the Sprout to be able to know that
 it should read the contents from that result file and parse it as a JSON file.
 
+The input fields defined in the `template.json` will get rendered in the Sprout UI when the template is selected and the
+the Sprout UI will require user to input values for them. When the executor template is fired up it receives those
+fields as environment variables. So let's say that the `template.json` defines the following inputs for the template
+```
+"inputs": [
+    {
+      "name": "Project name",
+      "description": "Jira project name",
+      "target": "executor",
+      "type": "text",
+      "field": "PROJECT_NAME"
+    },
+    {
+      "name": "Board type",
+      "description": "Board type",
+      "target": "executor",
+      "type": "list",
+      "field": "BOARD_TYPE",
+      "options": [
+        {
+          "text": "Create Kanban board",
+          "value": "kanban"
+        },
+        {
+          "text": "Create Scrum board",
+          "value": "scrum"
+        }
+      ]
+    }
+  ]
+```
+
+Then the template script will receive the followinf environment variables
+
+```
+PROJECT_NAME
+BOARD_TYPE
+```
+
+The value for `PROJECT_NAME` will be free text.
+the value for `BOARD_TYPE` will be either "kanban" or "scrum" based on the selection the user did in the UI.
+
 # Executor template permissions
 The executor template is able to read and write to the execution environment filesystem. Writing files is possible only
 under the path /tmp. The executor script (and the working dorectory of it) itself is located under a temporary
