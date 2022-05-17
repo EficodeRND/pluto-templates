@@ -4,6 +4,10 @@ for creating new, fully functional code repositories that are immediately availa
 work. Templates provide the base implementation, ci pipelines and the deployment of the components
 to the desired target.
 
+NOTE! If you are developing templates and any files or folders are missing from the repositories you are creating
+from the template you should check that your template repository `.templating/.gitignore.template` is not preventing
+the Sprout from pushing the contents of that directory / file.
+
 Templates follow the best practises for the languages, language frameworks, version control, Devops way of working
 and the deployment target systems.
 
@@ -51,7 +55,7 @@ Here's an example of functional template repository structure
 ```
 .
 ├── .templating                                          # Generic template files for all repositories
-│   ├── .gitignore.template                              # Template creating .gitignore for the repository
+│   ├── .gitignore.template                              # Template for creating the .gitignore for the repository
 │   ├── README.md.j2                                     # README.md template for the repo. Jinja2 template
 │   └── docker-compose.template.yml                      # Things that every docker-compose should contain
 ├── README.md                                            # This README file
