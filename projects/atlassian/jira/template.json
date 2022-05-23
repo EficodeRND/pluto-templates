@@ -5,6 +5,11 @@
     "projects/atlassian/jira/template/README.md"
   ],
   "appType": "executable",
+    "requires": [
+    {
+      "paths": ["executor_libraries/some_utility"]
+    }
+  ],
   "inputs": [
     {
       "name": "Project name",
