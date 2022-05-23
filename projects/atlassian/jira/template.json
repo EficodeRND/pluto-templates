@@ -5,7 +5,7 @@
     "projects/atlassian/jira/template/README.md"
   ],
   "appType": "executable",
-    "requires": [
+  "requires": [
     {
       "paths": ["executor_libraries/some_utility"]
     }
