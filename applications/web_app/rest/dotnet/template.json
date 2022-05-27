@@ -1,0 +1,45 @@
+{
+  "name": "ASP.NET Core Backend with REST API",
+  "description": "Controller based / Minimal Dotnet REST API.",
+  "inputs": [
+    {
+      "name": "Web API type",
+      "description": "Type of the ASP.NET Core Web API",
+      "type": "list",
+      "target": "template",
+      "field": "DOTNET_API_TYPE",
+      "options": [
+        {
+          "text": "Default (Controller based)",
+          "value": ""
+        },
+        {
+          "text": "Minimal",
+          "value": "-minimal"
+        }
+      ]
+    }
+  ],
+  "documentation": [
+    "https://docs.microsoft.com/en-us/aspnet/core/tutorials/min-web-api?view=aspnetcore-6.0&tabs=visual-studio-code"
+  ],
+  "appType": "backend",
+  "postActions": {
+    "GitHub": [
+      "ASP.NET Core Backend template is generated during repository initialization which may cause parallel GitHub Actions Workflows to fail. Any affected workflows will start working when first changes are pushed to GitHub."
+    ]
+  },
+  "dockerComposeSnippet": {
+    "serviceName": {
+      "build": {
+        "context": ""
+      },
+      "environment": {
+        "PORT": 5000
+      },
+      "ports": [
+        "5000:5000"
+      ]
+    }
+  }
+}

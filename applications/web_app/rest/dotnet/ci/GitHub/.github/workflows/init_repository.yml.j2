@@ -1,0 +1,27 @@
+name: Generate dotnet REST API
+on:
+  push:
+    branches:
+      - main
+jobs:
+  generate-template:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '6.0.x'
+      
+      - name: Generate template
+        {% if ctx.variables["total_app_templates"] > 1 -%}
+          working-directory: {{ctx.current_template['template_name']}}
+        {%- endif %}
+        run: dotnet new webapi {{ctx.current_template['parameters']['DOTNET_API_TYPE']}} -o rest
+      
+      - name: Remove initialization workflow
+        run: rm .github/workflows/init_repository.yml
+      
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Generate initial dotnet REST API
