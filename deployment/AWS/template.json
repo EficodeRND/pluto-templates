@@ -1,0 +1,41 @@
+{
+  "name": "Heroku",
+  "description": "Deploy your application stack to Heroku.",
+  "inputs": [
+    {
+      "name": "Heroku account email address",
+      "description": "Email address for accessing Heroku.",
+      "type": "email",
+      "target": "ci-secrets",
+      "field": "HEROKU_EMAIL"
+    },
+    {
+      "name": "Heroku API key",
+      "description": "API key for accessing Heroku.",
+      "type": "password",
+      "target": "ci-secrets",
+      "field": "HEROKU_API_KEY"
+    },
+    {
+      "name": "Heroku Region",
+      "description": "Heroku region where the applications should be deployed.",
+      "type": "list",
+      "target": "template",
+      "field": "HEROKU_REGION",
+      "options": [
+        {
+          "text": "Europe",
+          "value": "eu"
+        },
+        {
+          "text": "United States",
+          "value": "us"
+        }
+      ]
+    }
+  ],
+  "postActions": {
+    "all": [],
+    "GitHub": []
+  }
+}
