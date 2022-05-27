@@ -1,5 +1,5 @@
 {
-  "name": "Heroku",
+  "name": "AWS",
   "description": "Deploy your application stack to Heroku.",
   "inputs": [
     {
