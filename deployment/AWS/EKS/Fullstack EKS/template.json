@@ -1,35 +1,155 @@
 {
-  "name": "AWS",
-  "description": "Deploy your application stack to Heroku.",
+  "name": "ECR & EKS",
+  "description": "Store your application artifacts in AWS ECR and deploy them on AWS EKS.",
   "inputs": [
     {
-      "name": "Heroku account email address",
-      "description": "Email address for accessing Heroku.",
-      "type": "email",
-      "target": "ci-secrets",
-      "field": "HEROKU_EMAIL"
-    },
-    {
-      "name": "Heroku API key",
-      "description": "API key for accessing Heroku.",
-      "type": "password",
-      "target": "ci-secrets",
-      "field": "HEROKU_API_KEY"
-    },
-    {
-      "name": "Heroku Region",
-      "description": "Heroku region where the applications should be deployed.",
+      "name": "AWS Authentication type",
+      "description": "The method to be used for authenticating to Amazon Web Services",
       "type": "list",
       "target": "template",
-      "field": "HEROKU_REGION",
+      "field": "DEPLOY_AWS_AUTH",
       "options": [
         {
-          "text": "Europe",
-          "value": "eu"
+          "text": "Access key ID & secret access key",
+          "value": "keys"
         },
         {
-          "text": "United States",
-          "value": "us"
+          "text": "Single Sign-On",
+          "value": "sso"
+        }
+      ]
+    },
+    {
+      "name": "AWS Access Key ID",
+      "description": "Access key ID used to sign programmatic requests to AWS",
+      "type": "text",
+      "target": "ci-secrets",
+      "field": "DEPLOY_AWS_ID"
+    },
+    {
+      "name": "AWS secret access key",
+      "description": "Secret access key used to sign programmatic requests to AWS.",
+      "type": "password",
+      "target": "ci-secrets",
+      "field": "DEPLOY_AWS_SECRET"
+    },
+    {
+      "name": "SSO start URL",
+      "description": "AWS SSO start url for beginning the login process for your AWS SSO account.",
+      "type": "url",
+      "target": "ci-secrets",
+      "field": "DEPLOY_AWS_ID"
+    },
+    {
+      "name": "AWS Region",
+      "description": "AWS region where the applications should be deployed.",
+      "type": "list",
+      "target": "template",
+      "field": "DEPLOY_AWS_REGION",
+      "options": [
+        {
+          "text": "US East (N. Virginia)",
+          "value": "us-east-1"
+        },
+        {
+          "text": "US East (Ohio)",
+          "value": "us-east-2"
+        },
+        {
+          "text": "US West (N. California)",
+          "value": "us-west-1"
+        },
+        {
+          "text": "US West (Oregon)",
+          "value": "us-west-2"
+        },
+        {
+          "text": "Africa (Cape Town)",
+          "value": "af-south-1"
+        },
+        {
+          "text": "Asia Pacific (Hong Kong)",
+          "value": "ap-east-1"
+        },
+        {
+          "text": "Asia Pacific (Jakarta)",
+          "value": "ap-southeast-3"
+        },
+        {
+          "text": "Asia Pacific (Mumbai)",
+          "value": "ap-south-1"
+        },
+        {
+          "text": "Asia pacific (Osaka)",
+          "value": "ap-northeast-3"
+        },
+        {
+          "text": "Asia Pacific (Seoul)",
+          "value": "ap-northeast-2"
+        },
+        {
+          "text": "Asia pacific (Singapore)",
+          "value": "ap-southeast-1"
+        },
+        {
+          "text": "Asia pacific (Sydney)",
+          "value": "ap-southeast-2"
+        },
+        {
+          "text": "Asia pacific (Tokyo)",
+          "value": "ap-northeast-1"
+        },
+        {
+          "text": "Canada (Central)",
+          "value": "ca-central-1"
+        },
+        {
+          "text": "Europe (Frankfurt)",
+          "value": "eu-central-1"
+        },
+        {
+          "text": "Europe (Ireland)",
+          "value": "eu-west-1"
+        },
+        {
+          "text": "Europe (London)",
+          "value": "eu-west-2"
+        },
+        {
+          "text": "Europe (Milan)",
+          "value": "eu-south-1"
+        },
+        {
+          "text": "Europe (Paris)",
+          "value": "eu-west-3"
+        },
+        {
+          "text": "Europe (Stockholm)",
+          "value": "eu-north-1"
+        },
+        {
+          "text": "Middle East (Bahrain)",
+          "value": "me-south-1"
+        },
+        {
+          "text": "South America (São Paulo)",
+          "value": "sa-east-1"
+        },
+        {
+          "text": "Canada (Central)",
+          "value": "ca-central-1"
+        },
+        {
+          "text": "Canada (Central)",
+          "value": "ca-central-1"
+        },
+        {
+          "text": "Canada (Central)",
+          "value": "ca-central-1"
+        },
+        {
+          "text": "South America (São Paulo)",
+          "value": "sa-east-1"
         }
       ]
     }
