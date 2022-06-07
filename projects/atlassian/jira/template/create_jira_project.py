@@ -13,13 +13,30 @@ if __name__ == '__main__':
 
     log.info("Environment: %s", os.environ)
 
-    result = {'result': {
-        'projectKey': 'TSTPRJ',
-        'projectName': os.environ['PROJECT_NAME'],
-        'boardType': os.environ['BOARD_TYPE'],
-        'url': 'http://jira.yourcompany.example.com',
-        'someValue': tech_util.sum_n_multiply(2)
-    }}
+# Levels:
+# CRITICAL
+# INFO
+# DEBUG
+
+    result = {
+        'projectKey': {'value': 'TSTPRJ',
+                       'description': 'Jira project key',
+                       'level': 'INFO'},
+
+        'projectName': {'value': os.environ['PROJECT_NAME'],
+                        'description': 'Project name',
+                        'level': 'INFO'},
+        'boardType': {'value': os.environ['BOARD_TYPE'],
+                      'description': '',
+                      'level': 'INFO'},
+        'url': {'value': 'http://jira.yourcompany.example.com/TSTPRJ/Kanban',
+                'description': 'Jira URL',
+                'level': 'CRITICAL'},
+
+        'someValue': {'value': tech_util.sum_n_multiply(2),
+                      'description': 'Computed value',
+                      'level': 'DEBUG'}
+    }
 
     with open(os.environ['RESULT_FILE'], 'w', encoding="utf8") as target_file:
         target_file.write(json.dumps(result))
