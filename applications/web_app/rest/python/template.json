@@ -2,10 +2,17 @@
   "name": "Python Flask backend with REST API",
   "description": "Pure Python REST API implemented with Flask framework.",
   "documentation": [
-    "applications/web_app/rest/python/template/README.md",
     "https://flask.palletsprojects.com/"
   ],
   "appType": "backend",
+  "requires": [
+    {
+      "url": "https://github.com/EficodeEntDemo/python-rest-api-template.git",
+      "paths": [
+        "/"
+      ]
+    }
+  ],
   "postActions": null,
   "dockerComposeSnippet": {
     "serviceName": {
