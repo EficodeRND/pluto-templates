@@ -22,6 +22,8 @@ jobs:
       - name: Remove initialization workflow
         run: rm .github/workflows/init_repository.yml
       
-      - uses: stefanzweifel/git-auto-commit-action@v4
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
         with:
           commit_message: Generate initial dotnet REST API
+          delete-branch: true
