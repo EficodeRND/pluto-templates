@@ -26,7 +26,7 @@
   "appType": "backend",
   "postActions": {
     "GitHub": [
-      "ASP.NET Core Backend template is generated during repository initialization which may cause parallel GitHub Actions Workflows to fail. Any affected workflows will start working when first changes are pushed to GitHub."
+      "Merge the automatically created Pull Request containing the ASP.NET Core web API."
     ]
   },
   "dockerComposeSnippet": {
