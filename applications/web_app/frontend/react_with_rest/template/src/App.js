@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Axios from 'axios';
 import './App.css';
 
-const API_URL = '/api';
+const API_URL = '/api/';
 
 function App() {
   const [backendResponse, setBackendResponse] = useState('');
