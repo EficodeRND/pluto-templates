@@ -9,7 +9,8 @@ if __name__ == '__main__':
   print("RUNNING....")
   # log.info("Environment: %s", os.environ)
 
-  filename = "jenkins-multibranch-pipeline.xml"
+  dirname = os.path.dirname(__file__)
+  filename = os.path.join(dirname, "jenkins-multibranch-pipeline.xml")
 
   if not os.path.exists(filename):
     print("File does not exist.")
