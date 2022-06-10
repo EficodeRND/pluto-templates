@@ -5,32 +5,7 @@
     "README.md"
   ],
   "appType": "executable",
-  "inputs": [
-    {
-      "name": "Project name",
-      "description": "Jira project name",
-      "target": "executor",
-      "type": "text",
-      "field": "PROJECT_NAME"
-    },
-    {
-      "name": "Board type",
-      "description": "Board type",
-      "target": "executor",
-      "type": "list",
-      "field": "BOARD_TYPE",
-      "options": [
-        {
-          "text": "Create Kanban board",
-          "value": "kanban"
-        },
-        {
-          "text": "Create Scrum board",
-          "value": "scrum"
-        }
-      ]
-    }
-  ],
+  "inputs": [],
   "executable": "jenkins.py",
   "postActions": {
     "all": [],
