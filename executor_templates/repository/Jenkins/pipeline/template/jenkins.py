@@ -34,11 +34,12 @@ if __name__ == '__main__':
         print("File does not exist.")
     else:
         print("File exists.")
-        with open(filename, 'r', encoding="utf8") as file:
+        """ with open(filename, 'r', encoding="utf8") as file:
           content = file.read().splitlines()
 
         for line in content:
             print(line)
+        """
 
 headers = requests.structures.CaseInsensitiveDict()
 headers["Content-Type"] = "application/x-www-form-urlencoded"
@@ -73,7 +74,7 @@ headers["Content-Type"] = "text/xml"
 
 #TODO: parse repo name from git url using "import parser from git_url_parse"
 
-job_creation_url = JENKINS_SERVER_URL + "/job/"+PROJECT_NAME+"/createItem?name=parsed_repo_name"
+job_creation_url = JENKINS_SERVER_URL + "/job/" + JENKINS_FOLDER_NAME + "/createItem?name=parsed_repo_name"
 with open(filename) as xml:
     resp = requests.post(job_creation_url, headers=headers, data=xml)
     print("Job creation HTTP response code: "+str(resp.status_code))
