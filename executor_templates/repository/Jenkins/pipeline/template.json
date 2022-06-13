@@ -5,7 +5,64 @@
     "README.md"
   ],
   "appType": "executable",
-  "inputs": [],
+  "inputs": [
+    {
+      "name": "Project name",
+      "description": "Name of the sprout project where this repository is located",
+      "target": "executor",
+      "type": "text",
+      "field": "PROJECT_NAME"
+    },
+    {
+      "name": "GitHub Repository URL",
+      "description": "GitHub Repository URL",
+      "target": "executor",
+      "type": "text",
+      "field": "GITHUB_REPO_URL"
+    },
+    {
+      "name": "Jenkins server URL",
+      "description": "Jenkins server URL",
+      "target": "executor",
+      "type": "text",
+      "field": "JENKINS_SERVER_URL"
+    },
+    {
+      "name": "Jenkins folder name",
+      "description": "Jenkins folder name",
+      "target": "executor",
+      "type": "text",
+      "field": "JENKINS_FOLDER_NAME"
+    },
+    {
+      "name": "Jenkins username",
+      "description": "Jenkins username",
+      "target": "executor",
+      "type": "text",
+      "field": "JENKINS_USERNAME"
+    },
+    {
+      "name": "Jenkins API Key",
+      "description": "Jenkins API Key",
+      "target": "executor",
+      "type": "password",
+      "field": "JENKINS_API_KEY"
+    },
+    {
+      "name": "AWS Access Key",
+      "description": "AWS access Key ID",
+      "target": "executor",
+      "type": "text",
+      "field": "AWS_ACCESS_KEY"
+    },
+    {
+      "name": "AWS Secret Key",
+      "description": "AWS Secret key",
+      "target": "executor",
+      "type": "password",
+      "field": "AWS_SECRET_KEY"
+    }
+  ],
   "executable": "jenkins.py",
   "postActions": {
     "all": [],
