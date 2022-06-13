@@ -49,7 +49,7 @@ print("using auth header Basic "+ut64)
 headers["Authorization"] = "Basic "+str(ut64)
 
 #get jenkins crumb
-crumb_request_url=JENKINS_SERVER_URL + "crumbIssuer/api/json"
+crumb_request_url=JENKINS_SERVER_URL + "/crumbIssuer/api/json"
 print("requesting crumb from "+crumb_request_url)
 crumb_resp = requests.post(crumb_request_url, headers=headers)
 #TODO: check if crumb req successful
