@@ -13,25 +13,32 @@ if 'services' in locals():
 else:
     print("no sprout services found")
     args=sys.argv
-    if args[1]=="debug":
-        PROJECT_NAME, GITHUB_REPO_URL, JENKINS_SERVER_URL, JENKINS_FOLDER_NAME, JENKINS_USERNAME, JENKINS_API_KEY = args[2], args[3], args[4], args[5], args[6], args[7]
+    if len(args) > 1:
+        PROJECT_NAME, GITHUB_REPO_URL, JENKINS_SERVER_URL, JENKINS_FOLDER_NAME, JENKINS_USERNAME, JENKINS_API_KEY = args[1], args[2], args[3], args[4], args[5], args[6]
+    else:
+        PROJECT_NAME = os.environ.get("PROJECT_NAME")
+        GITHUB_REPO_URL = os.environ.get("GITHUB_REPO_URL")
+        JENKINS_SERVER_URL = os.environ.get("JENKINS_SERVER_URL")
+        JENKINS_FOLDER_NAME = os.environ.get("JENKINS_FOLDER_NAME")
+        JENKINS_USERNAME = os.environ.get("JENKINS_USERNAME")
+        JENKINS_API_KEY = os.environ.get("JENKINS_API_KEY")
 
 if __name__ == '__main__':
-  print("RUNNING....")
-  # log.info("Environment: %s", os.environ)
+    print("RUNNING....")
+    # log.info("Environment: %s", os.environ)
 
-  dirname = os.path.dirname(__file__)
-  filename = os.path.join(dirname, "jenkins-multibranch-pipeline.xml.j2")
+    dirname = os.path.dirname(__file__)
+    filename = os.path.join(dirname, "jenkins-multibranch-pipeline.xml.j2")
 
-  if not os.path.exists(filename):
-    print("File does not exist.")
-  else:
-    print("File exists.")
-    with open(filename, 'r', encoding="utf8") as file:
-      content = file.read().splitlines()
+    if not os.path.exists(filename):
+        print("File does not exist.")
+    else:
+        print("File exists.")
+        with open(filename, 'r', encoding="utf8") as file:
+          content = file.read().splitlines()
 
-    for line in content:
-      print(line)
+        for line in content:
+            print(line)
 
 headers = requests.structures.CaseInsensitiveDict()
 headers["Content-Type"] = "application/x-www-form-urlencoded"
