@@ -8,20 +8,26 @@ import requests
 import base64
 # from utils.common import LogManager
 
-if 'services' in locals():
+try:
     from services.templating.renderer import TemplateRenderer, SimpleTemplateContext
+except ImportError:
+    print("No Sprout services found. Do you have pluto/backend/endpoints/app in $PYTHONPATH and jinja2 installed? Exiting.", file=sys.stderr)
+    sys.exit(1)
 else:
-    print("no sprout services found")
-    args=sys.argv
-    if len(args) > 1:
-        PROJECT_NAME, GITHUB_REPO_URL, JENKINS_SERVER_URL, JENKINS_FOLDER_NAME, JENKINS_USERNAME, JENKINS_API_KEY = args[1], args[2], args[3], args[4], args[5], args[6]
-    else:
-        PROJECT_NAME = os.environ.get("PROJECT_NAME")
-        GITHUB_REPO_URL = os.environ.get("GITHUB_REPO_URL")
-        JENKINS_SERVER_URL = os.environ.get("JENKINS_SERVER_URL")
-        JENKINS_FOLDER_NAME = os.environ.get("JENKINS_FOLDER_NAME")
-        JENKINS_USERNAME = os.environ.get("JENKINS_USERNAME")
-        JENKINS_API_KEY = os.environ.get("JENKINS_API_KEY")
+    print("Sprout services found.")
+
+args=sys.argv
+if len(args) > 1:
+    PROJECT_NAME, GITHUB_REPO_URL, JENKINS_SERVER_URL, JENKINS_FOLDER_NAME, JENKINS_USERNAME, JENKINS_API_KEY = args[1], args[2], args[3], args[4], args[5], args[6]
+else:
+    PROJECT_NAME = os.environ.get("PROJECT_NAME")
+    GITHUB_REPO_URL = os.environ.get("GITHUB_REPO_URL")
+    JENKINS_SERVER_URL = os.environ.get("JENKINS_SERVER_URL")
+    JENKINS_FOLDER_NAME = os.environ.get("JENKINS_FOLDER_NAME")
+    JENKINS_USERNAME = os.environ.get("JENKINS_USERNAME")
+    JENKINS_API_KEY = os.environ.get("JENKINS_API_KEY")
+
+print(f"{PROJECT_NAME=} {GITHUB_REPO_URL=} {JENKINS_SERVER_URL=} {JENKINS_FOLDER_NAME=} {JENKINS_USERNAME=} {JENKINS_API_KEY=}")
 
 if __name__ == '__main__':
     print("RUNNING....")
@@ -31,9 +37,10 @@ if __name__ == '__main__':
     filename = os.path.join(dirname, "jenkins-multibranch-pipeline.xml.j2")
 
     if not os.path.exists(filename):
-        print("File does not exist.")
+        print("Unable to find multibranch pipeline xml template file. Exiting.", file=sys.stderr)
+        sys.exit(1)
     else:
-        print("File exists.")
+        print("Found multibranch pipeline xml template file.")
         """ with open(filename, 'r', encoding="utf8") as file:
           content = file.read().splitlines()
 

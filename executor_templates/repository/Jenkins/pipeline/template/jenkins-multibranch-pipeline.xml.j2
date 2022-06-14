@@ -1,7 +1,12 @@
 <org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject plugin="workflow-multibranch@712.vc169a_1387405">
 	<actions/>
-	<description/>
+	<description>zdd</description>
 	<properties>
+		<org.jenkinsci.plugins.configfiles.folder.FolderConfigFileProperty plugin="config-file-provider@3.10.0">
+			<configs class="sorted-set">
+				<comparator class="org.jenkinsci.plugins.configfiles.ConfigByIdComparator"/>
+			</configs>
+		</org.jenkinsci.plugins.configfiles.folder.FolderConfigFileProperty>
 		<org.jenkinsci.plugins.docker.workflow.declarative.FolderConfig plugin="docker-workflow@1.28">
 			<dockerLabel/>
 			<registry plugin="docker-commons@1.19"/>
@@ -13,9 +18,6 @@
 				<timeout>60</timeout>
 			</configuration>
 		</com.datapipe.jenkins.vault.configuration.FolderVaultConfiguration>
-		<org.csanchez.jenkins.plugins.kubernetes.KubernetesFolderProperty plugin="kubernetes@3580.v78271e5631dc">
-			<permittedClouds/>
-		</org.csanchez.jenkins.plugins.kubernetes.KubernetesFolderProperty>
 	</properties>
 	<folderViews class="jenkins.branch.MultiBranchProjectViewHolder" plugin="branch-api@2.1046.v0ca_37783ecc5">
 		<owner class="org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" reference="../.."/>
@@ -43,9 +45,9 @@
 					<id>aa9a33dc-20c2-4aed-ac97-7c09d270cd23</id>
 					<apiUri>https://api.github.com</apiUri>
 					<credentialsId>SproutJenkinsGitHubApp</credentialsId>
-					<repoOwner>jpvg10</repoOwner>
-					<repository>test-local</repository>
-					<repositoryUrl>https://github.com/jpvg10/test-local.git</repositoryUrl>
+					<repoOwner>zeeket</repoOwner>
+					<repository>test-efi-project</repository>
+					<repositoryUrl>{{ template_gh_url }}</repositoryUrl>
 					<traits>
 						<org.jenkinsci.plugins.github__branch__source.BranchDiscoveryTrait>
 							<strategyId>1</strategyId>
