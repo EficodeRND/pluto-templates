@@ -69,10 +69,10 @@ headers["Jenkins-Crumb"] = crumb
 #TODO: get parsed_repo_name and parsed_repo_owner from git url using "import parser from git_url_parse"
 
 #TODO: use sprout lib to render job creation xml
-#ctx = SimpleTemplateContext({'template_jenkins_folder': JENKINS_FOLDER_NAME})
-#renderer = TemplateRenderer(template_context=ctx)
-#result, values, error = renderer.render('test_data/test_template.txt.j2')
-#print(f"Template rendered. Result: '%s' | Return values: %s", result, values)
+ctx = SimpleTemplateContext({'template_gh_url': GITHUB_REPO_URL})
+renderer = TemplateRenderer(template_context=ctx)
+result, values, error = renderer.render(filename)
+print(f"Template rendered. Result: '%s' | Return values: %s", result, values)
 
 headers["Content-Type"] = "text/xml"
 
@@ -82,6 +82,6 @@ headers["Content-Type"] = "text/xml"
 #TODO: parse repo name from git url using "import parser from git_url_parse"
 
 job_creation_url = JENKINS_SERVER_URL + "/job/" + JENKINS_FOLDER_NAME + "/createItem?name=parsed_repo_name"
-with open(filename) as xml:
-    resp = requests.post(job_creation_url, headers=headers, data=xml)
-    print("Job creation HTTP response code: "+str(resp.status_code))
+#with open(filename) as xml:
+resp = requests.post(job_creation_url, headers=headers, data=result)
+print("Job creation HTTP response code: "+str(resp.status_code))
