@@ -11,9 +11,10 @@ import base64
 try:
     from services.templating.renderer import TemplateRenderer, SimpleTemplateContext
 except ImportError:
-    sys.exit("No Sprout services found, did you add pluto/backend/endpoints/app to your $PYTHONPATH and have jinja2 installed?")
+    print("No Sprout services found. Do you have pluto/backend/endpoints/app in $PYTHONPATH and jinja2 installed? Exiting.", file=sys.stderr)
+    sys.exit(1)
 else:
-    print("Sprout services found")
+    print("Sprout services found.")
 
 args=sys.argv
 if len(args) > 1:
@@ -26,6 +27,8 @@ else:
     JENKINS_USERNAME = os.environ.get("JENKINS_USERNAME")
     JENKINS_API_KEY = os.environ.get("JENKINS_API_KEY")
 
+print(f"{PROJECT_NAME=} {GITHUB_REPO_URL=} {JENKINS_SERVER_URL=} {JENKINS_FOLDER_NAME=} {JENKINS_USERNAME=} {JENKINS_API_KEY=}")
+
 if __name__ == '__main__':
     print("RUNNING....")
     # log.info("Environment: %s", os.environ)
@@ -34,9 +37,10 @@ if __name__ == '__main__':
     filename = os.path.join(dirname, "jenkins-multibranch-pipeline.xml.j2")
 
     if not os.path.exists(filename):
-        print("File does not exist.")
+        print("Unable to find multibranch pipeline xml template file. Exiting.", file=sys.stderr)
+        sys.exit(1)
     else:
-        print("File exists.")
+        print("Found multibranch pipeline xml template file.")
         """ with open(filename, 'r', encoding="utf8") as file:
           content = file.read().splitlines()
 
