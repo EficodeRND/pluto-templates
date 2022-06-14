@@ -8,20 +8,23 @@ import requests
 import base64
 # from utils.common import LogManager
 
-if 'services' in locals():
+try:
     from services.templating.renderer import TemplateRenderer, SimpleTemplateContext
+except ImportError:
+    sys.exit("No Sprout services found, did you add pluto/backend/endpoints/app to your $PYTHONPATH and have jinja2 installed?")
 else:
-    print("no sprout services found")
-    args=sys.argv
-    if len(args) > 1:
-        PROJECT_NAME, GITHUB_REPO_URL, JENKINS_SERVER_URL, JENKINS_FOLDER_NAME, JENKINS_USERNAME, JENKINS_API_KEY = args[1], args[2], args[3], args[4], args[5], args[6]
-    else:
-        PROJECT_NAME = os.environ.get("PROJECT_NAME")
-        GITHUB_REPO_URL = os.environ.get("GITHUB_REPO_URL")
-        JENKINS_SERVER_URL = os.environ.get("JENKINS_SERVER_URL")
-        JENKINS_FOLDER_NAME = os.environ.get("JENKINS_FOLDER_NAME")
-        JENKINS_USERNAME = os.environ.get("JENKINS_USERNAME")
-        JENKINS_API_KEY = os.environ.get("JENKINS_API_KEY")
+    print("Sprout services found")
+
+args=sys.argv
+if len(args) > 1:
+    PROJECT_NAME, GITHUB_REPO_URL, JENKINS_SERVER_URL, JENKINS_FOLDER_NAME, JENKINS_USERNAME, JENKINS_API_KEY = args[1], args[2], args[3], args[4], args[5], args[6]
+else:
+    PROJECT_NAME = os.environ.get("PROJECT_NAME")
+    GITHUB_REPO_URL = os.environ.get("GITHUB_REPO_URL")
+    JENKINS_SERVER_URL = os.environ.get("JENKINS_SERVER_URL")
+    JENKINS_FOLDER_NAME = os.environ.get("JENKINS_FOLDER_NAME")
+    JENKINS_USERNAME = os.environ.get("JENKINS_USERNAME")
+    JENKINS_API_KEY = os.environ.get("JENKINS_API_KEY")
 
 if __name__ == '__main__':
     print("RUNNING....")
