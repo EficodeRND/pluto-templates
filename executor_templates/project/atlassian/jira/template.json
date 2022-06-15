@@ -36,7 +36,7 @@
       ]
     }
   ],
-  "executable": "create_jira_project.py",
+  "executable": "template/create_jira_project.py",
   "postActions": {
     "all": [],
     "GitHub": []
