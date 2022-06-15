@@ -2,11 +2,8 @@
 
 import sys
 import os
-import json
-import logging as log
 import requests
 import base64
-# from utils.common import LogManager
 
 try:
     from services.templating.renderer import TemplateRenderer, SimpleTemplateContext
@@ -36,68 +33,56 @@ else:
     JENKINS_API_KEY = os.environ.get("JENKINS_API_KEY")
 
 print(f"{PROJECT_NAME=} {GITHUB_REPO_URL=} {JENKINS_SERVER_URL=} {JENKINS_FOLDER_NAME=} {JENKINS_USERNAME=} {JENKINS_API_KEY=}")
+print("RUNNING....")
 
-if __name__ == '__main__':
-    print("RUNNING....")
-    # log.info("Environment: %s", os.environ)
+dirname = os.path.dirname(__file__)
+filename = os.path.join(dirname, "jenkins-multibranch-pipeline.xml.j2")
 
-    dirname = os.path.dirname(__file__)
-    filename = os.path.join(dirname, "jenkins-multibranch-pipeline.xml.j2")
+if not os.path.exists(filename):
+    print("Unable to find multibranch pipeline xml template file. Exiting.", file=sys.stderr)
+    sys.exit(1)
+else:
+    print("Found multibranch pipeline xml template file.")
 
-    if not os.path.exists(filename):
-        print("Unable to find multibranch pipeline xml template file. Exiting.", file=sys.stderr)
-        sys.exit(1)
-    else:
-        print("Found multibranch pipeline xml template file.")
-        """ with open(filename, 'r', encoding="utf8") as file:
-          content = file.read().splitlines()
-
-        for line in content:
-            print(line)
-        """
-
+# get jenkins crumb
 headers = requests.structures.CaseInsensitiveDict()
 headers["Content-Type"] = "application/x-www-form-urlencoded"
-login_string=JENKINS_USERNAME+":"+JENKINS_API_KEY
-ut64 = base64.b64encode(bytes(login_string, encoding='utf8')).decode()
-print("using auth header Basic "+ut64)
+login_string = JENKINS_USERNAME + ":" + JENKINS_API_KEY
+ut64 = base64.b64encode(bytes(login_string, encoding="utf8")).decode()
+print("using auth header Basic " + ut64)
+headers["Authorization"] = "Basic " + ut64
 
-headers["Authorization"] = "Basic "+str(ut64)
-
-#get jenkins crumb
-crumb_request_url=JENKINS_SERVER_URL + "/crumbIssuer/api/json"
-print("requesting crumb from "+crumb_request_url)
+crumb_request_url = JENKINS_SERVER_URL + "/crumbIssuer/api/json"
+print("requesting crumb from " + crumb_request_url)
 crumb_resp = requests.post(crumb_request_url, headers=headers)
 #TODO: check if crumb req successful
-crumb=crumb_resp.json()["crumb"]
-print("received Jenkins crumb "+crumb)
+crumb = crumb_resp.json()["crumb"]
+print("received Jenkins crumb " + crumb)
 
-headers["Jenkins-Crumb"] = crumb 
+headers["Jenkins-Crumb"] = crumb
 
-#TODO: get parsed_repo_name and parsed_repo_owner from git url using "import parser from git_url_parse"
-
+# parse GitHub info from repo url
 parser = Parser(GITHUB_REPO_URL)
 parsed = parser.parse()
 for k, v in zip(parsed._fields, parsed):
     print(k, v)
 
-#TODO: use sprout lib to render job creation xml
-print(f"{filename=}")
-ctx = SimpleTemplateContext({"template_gh_url":GITHUB_REPO_URL,"parsed_owner":parsed.owner,"parsed_name":parsed.name})
+# render xml template
+ctx = SimpleTemplateContext({
+    "template_gh_url": GITHUB_REPO_URL,
+    "parsed_owner": parsed.owner,
+    "parsed_name": parsed.name
+})
 renderer = TemplateRenderer(template_context=ctx)
 result, values, error = renderer.render(filename)
 print("Template rendered.\n", result)
 
-headers["Content-Type"] = "text/xml"
-
 #TODO: use sprout lib to render cred creation xml & send AWS creds to Jenkins cred store
 #POST credentials.xml to $JENKINS_URL/<path to context>/credentials/store/<store id>/domain/<domain name>/createCredentials
 
-#TODO: parse repo name from git url using "import parser from git_url_parse"
-
-job_creation_url = JENKINS_SERVER_URL + "/job/" + JENKINS_FOLDER_NAME + "/createItem?name="+parsed.name
-
-print(f'{job_creation_url=}')
-#with open(filename) as xml:
+# post xml file to jenkins
+headers["Content-Type"] = "text/xml"
+job_creation_url = JENKINS_SERVER_URL + "/job/" + JENKINS_FOLDER_NAME + "/createItem?name=" + parsed.name
+print(f"{job_creation_url=}")
 resp = requests.post(job_creation_url, headers=headers, data=result)
-print("Job creation HTTP response code: "+str(resp.status_code))
+print("Job creation HTTP response code: " + str(resp.status_code))
