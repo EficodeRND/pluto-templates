@@ -1,12 +1,7 @@
 <org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject plugin="workflow-multibranch@712.vc169a_1387405">
 	<actions/>
-	<description>zdd</description>
+	<description/>
 	<properties>
-		<org.jenkinsci.plugins.configfiles.folder.FolderConfigFileProperty plugin="config-file-provider@3.10.0">
-			<configs class="sorted-set">
-				<comparator class="org.jenkinsci.plugins.configfiles.ConfigByIdComparator"/>
-			</configs>
-		</org.jenkinsci.plugins.configfiles.folder.FolderConfigFileProperty>
 		<org.jenkinsci.plugins.docker.workflow.declarative.FolderConfig plugin="docker-workflow@1.28">
 			<dockerLabel/>
 			<registry plugin="docker-commons@1.19"/>
@@ -18,6 +13,9 @@
 				<timeout>60</timeout>
 			</configuration>
 		</com.datapipe.jenkins.vault.configuration.FolderVaultConfiguration>
+		<org.csanchez.jenkins.plugins.kubernetes.KubernetesFolderProperty plugin="kubernetes@3580.v78271e5631dc">
+			<permittedClouds/>
+		</org.csanchez.jenkins.plugins.kubernetes.KubernetesFolderProperty>
 	</properties>
 	<folderViews class="jenkins.branch.MultiBranchProjectViewHolder" plugin="branch-api@2.1046.v0ca_37783ecc5">
 		<owner class="org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" reference="../.."/>
@@ -42,12 +40,12 @@
 		<data>
 			<jenkins.branch.BranchSource>
 				<source class="org.jenkinsci.plugins.github_branch_source.GitHubSCMSource" plugin="github-branch-source@1637.vd833b_7ca_7654">
-					<id>aa9a33dc-20c2-4aed-ac97-7c09d270cd23</id>
+					<id>7e24a938-d260-4468-9af5-51c98e57d681</id>
 					<apiUri>https://api.github.com</apiUri>
 					<credentialsId>SproutJenkinsGitHubApp</credentialsId>
-					<repoOwner>zeeket</repoOwner>
-					<repository>test-efi-project</repository>
-					<repositoryUrl>{{ template_gh_url }}</repositoryUrl>
+					<repoOwner>{{ ctx.values['parsed_owner'] }}</repoOwner>
+					<repository>{{ ctx.values['parsed_name'] }}</repository>
+					<repositoryUrl>{{ ctx.values['GITHUB_REPO_URL'] }}</repositoryUrl>
 					<traits>
 						<org.jenkinsci.plugins.github__branch__source.BranchDiscoveryTrait>
 							<strategyId>1</strategyId>
