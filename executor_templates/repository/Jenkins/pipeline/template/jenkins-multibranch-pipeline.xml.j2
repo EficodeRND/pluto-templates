@@ -42,12 +42,12 @@
 		<data>
 			<jenkins.branch.BranchSource>
 				<source class="org.jenkinsci.plugins.github_branch_source.GitHubSCMSource" plugin="github-branch-source@1637.vd833b_7ca_7654">
-					<id>aa9a33dc-20c2-4aed-ac97-7c09d270cd23</id>
+					<id>7e24a938-d260-4468-9af5-51c98e57d681</id>
 					<apiUri>https://api.github.com</apiUri>
 					<credentialsId>SproutJenkinsGitHubApp</credentialsId>
-					<repoOwner>zeeket</repoOwner>
-					<repository>test-efi-project</repository>
-					<repositoryUrl>{{ template_gh_url }}</repositoryUrl>
+					<repoOwner>{{ ctx.values['parsed_owner'] }}</repoOwner>
+					<repository>{{ ctx.values['parsed_name'] }}</repository>
+					<repositoryUrl>{{ ctx.values['GITHUB_REPO_URL'] }}</repositoryUrl>
 					<traits>
 						<org.jenkinsci.plugins.github__branch__source.BranchDiscoveryTrait>
 							<strategyId>1</strategyId>

@@ -1,10 +1,15 @@
 {
-  "name": "Jenkins script",
-  "description": "Script for creating the Jenkins pipeline",
+  "name": "GitHub Jenkins pipeline setup script",
+  "description": "Creates a Jenkins pipeline for a GitHub Repository",
   "documentation": [
     "README.md"
   ],
   "appType": "executable",
+  "requires": [
+    {
+      "paths": ["executor_libraries/giturlparse"]
+    }
+  ],
   "inputs": [
     {
       "name": "Project name",

@@ -16,6 +16,14 @@ except ImportError:
 else:
     print("Sprout services found.")
 
+try:
+    from git_url_parse import Parser
+except ImportError:
+    print("Git URL parser not found. Do you have pluto-templates/executor_libraries/giturlparse in $PYTHONPATH? Exiting.", file=sys.stderr)
+    sys.exit(1)
+else:
+    print("Git URL parser found.")
+
 args=sys.argv
 if len(args) > 1:
     PROJECT_NAME, GITHUB_REPO_URL, JENKINS_SERVER_URL, JENKINS_FOLDER_NAME, JENKINS_USERNAME, JENKINS_API_KEY = args[1], args[2], args[3], args[4], args[5], args[6]
@@ -68,11 +76,17 @@ headers["Jenkins-Crumb"] = crumb
 
 #TODO: get parsed_repo_name and parsed_repo_owner from git url using "import parser from git_url_parse"
 
+parser = Parser(GITHUB_REPO_URL)
+parsed = parser.parse()
+for k, v in zip(parsed._fields, parsed):
+    print(k, v)
+
 #TODO: use sprout lib to render job creation xml
-#ctx = SimpleTemplateContext({'template_jenkins_folder': JENKINS_FOLDER_NAME})
-#renderer = TemplateRenderer(template_context=ctx)
-#result, values, error = renderer.render('test_data/test_template.txt.j2')
-#print(f"Template rendered. Result: '%s' | Return values: %s", result, values)
+print(f"{filename=}")
+ctx = SimpleTemplateContext({"template_gh_url":GITHUB_REPO_URL,"parsed_owner":parsed.owner,"parsed_name":parsed.name})
+renderer = TemplateRenderer(template_context=ctx)
+result, values, error = renderer.render(filename)
+print("Template rendered.\n", result)
 
 headers["Content-Type"] = "text/xml"
 
@@ -81,7 +95,9 @@ headers["Content-Type"] = "text/xml"
 
 #TODO: parse repo name from git url using "import parser from git_url_parse"
 
-job_creation_url = JENKINS_SERVER_URL + "/job/" + JENKINS_FOLDER_NAME + "/createItem?name=parsed_repo_name"
-with open(filename) as xml:
-    resp = requests.post(job_creation_url, headers=headers, data=xml)
-    print("Job creation HTTP response code: "+str(resp.status_code))
+job_creation_url = JENKINS_SERVER_URL + "/job/" + JENKINS_FOLDER_NAME + "/createItem?name="+parsed.name
+
+print(f'{job_creation_url=}')
+#with open(filename) as xml:
+resp = requests.post(job_creation_url, headers=headers, data=result)
+print("Job creation HTTP response code: "+str(resp.status_code))
