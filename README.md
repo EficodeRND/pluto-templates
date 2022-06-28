@@ -106,9 +106,8 @@ Here's an example of functional template repository structure
 │   │           │           ├── README.md
 │   │           │           └── stale.yml
 │   │           └── template.json                        # Template meta data file
-│   └── applications                                     # Application type specific CI templates
-│       └── web_app                                      # CI templates for the app type 'web_app'
-│           └── acceptance                               # Acceptance test templates
+│   └── web_app                                          # CI templates for the app type 'web_app'
+│       └── acceptance                                   # Acceptance test templates
 │               └── GitHub                               # Acceptance test template for GitHub
 │                   └── robot_framework                  # Template for running Robot Framework on GitHub
 │                       ├── ...                          # Files & folders to copy to the new repo root
