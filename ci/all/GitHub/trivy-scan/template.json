@@ -1,0 +1,14 @@
+{
+  "name": "Trivy security scan",
+  "description": "Scans the repo with Trivy on pull requests.",
+  "postActions": {},
+  "inputs": [
+    {
+      "name": "Scan Docker images",
+      "description": "Whether to scan Docker images built by docker-compose. This might find many vulnerabilities that are not relevant to the use case of the template.",
+      "type": "checkbox",
+      "target": "template",
+      "field": "SCAN_DOCKER"
+    }
+  ]
+}

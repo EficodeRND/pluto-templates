@@ -1,0 +1,16 @@
+{
+  "Changes": [
+      {
+          "Action": "UPSERT",
+          "ResourceRecordSet": {
+            "Name": "grafana-URL",
+            "Type": "A",
+            "AliasTarget": {
+              "HostedZoneId": "ELB_HOSTED_ZONE_ID",
+              "DNSName": "ELB_DNS",
+              "EvaluateTargetHealth": false
+            }
+          }
+      }
+  ]
+}

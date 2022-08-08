@@ -1,0 +1,40 @@
+{
+  "Changes": [
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "development-URL",
+        "Type": "A",
+        "AliasTarget": {
+          "HostedZoneId": "ELB_HOSTED_ZONE_ID",
+          "DNSName": "ELB_DNS",
+          "EvaluateTargetHealth": false
+        }
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "staging-URL",
+        "Type": "A",
+        "AliasTarget": {
+          "HostedZoneId": "ELB_HOSTED_ZONE_ID",
+          "DNSName": "ELB_DNS",
+          "EvaluateTargetHealth": false
+        }
+      }
+    },
+    {
+      "Action": "UPSERT",
+      "ResourceRecordSet": {
+        "Name": "URL",
+        "Type": "A",
+        "AliasTarget": {
+          "HostedZoneId": "ELB_HOSTED_ZONE_ID",
+          "DNSName": "ELB_DNS",
+          "EvaluateTargetHealth": false
+        }
+      }
+    }
+  ]
+}

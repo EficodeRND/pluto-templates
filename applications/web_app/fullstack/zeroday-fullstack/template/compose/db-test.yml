@@ -1,0 +1,16 @@
+version: '2'
+
+services:
+  db-test:
+    environment:
+      POSTGRES_DB: demo
+      POSTGRES_PASSWORD: demo
+      POSTGRES_USER: demo
+    image: postgres:bullseye
+    ports:
+      - 54320:5432
+    volumes:
+      - dbdata-test:/var/lib/postgresql/data
+
+volumes:
+  dbdata-test:

@@ -1,0 +1,41 @@
+version: '2'
+
+services:
+  robotbackend:
+    build: backend
+    command: sh -c './wait-for.sh db-test:5432 -- node db/seeds.js && npm start'
+    environment:
+      FRONTEND: http://robotfrontend:8001
+      DATABASE_URL: postgres://demo:demo@db-test/demo
+      GOOGLE_OAUTH_ID: 'app-id-12345678'
+      GOOGLE_OAUTH_SECRET: 'app-id-12345678'
+      SECRET: '12345678'
+      PORT: 9001
+    ports:
+      - 9001:9001
+    depends_on:
+      - db-test
+
+  robotfrontend:
+    build: frontend
+    environment:
+      ENDPOINT: http://robotbackend:9001/api
+      PORT: 8001
+    ports:
+      - 8001:8001
+
+  robot:
+    build:
+      context: robot
+      args:
+        - UID=${UID}
+        - GID=${UID}
+    command: sh -c '/robot/wait-for.sh robotfrontend:8001 -- sleep 5 && /robot/run_tests.sh'
+    environment:
+      BROWSER: HeadlessChrome
+      SERVER: http://robotfrontend:8001
+    volumes:
+      - ./results:/results:rw
+    depends_on:
+      - robotbackend
+      - robotfrontend

@@ -1,0 +1,32 @@
+version: '2'
+
+services:
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile.production
+    environment:
+      NODE_ENV: production
+      ENDPOINT: ${ENDPOINT}
+      GOOGLE_OAUTH_ID: ${GOOGLE_OAUTH_ID}
+      FACEBOOK_APP_ID: ${FACEBOOK_APP_ID}
+    ports:
+      - 8000:8000
+
+  backend:
+    build: backend
+    command: ./wait-for.sh db:5432 -- npm start
+    environment:
+      DATABASE_URL: postgres://demo:demo@db/demo
+      FRONTEND: ${FRONTEND}
+      GOOGLE_OAUTH_ID: ${GOOGLE_OAUTH_ID}
+      GOOGLE_OAUTH_SECRET: ${GOOGLE_OAUTH_SECRET}
+      FACEBOOK_APP_ID: ${FACEBOOK_APP_ID}
+      FACEBOOK_APP_SECRET: ${FACEBOOK_APP_SECRET}
+      SECRET: ${SECRET}
+    volumes:
+      - ./backend/src:/usr/src/app/src
+    ports:
+      - 9000:9000
+    depends_on:
+      - db

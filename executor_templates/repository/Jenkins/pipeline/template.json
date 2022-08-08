@@ -1,0 +1,91 @@
+{
+  "name": "GitHub Jenkins pipeline setup script",
+  "description": "Creates a Jenkins pipeline for a GitHub Repository",
+  "documentation": [
+    "README.md"
+  ],
+  "appType": "executable",
+  "requires": [
+    {
+      "paths": ["executor_libraries/giturlparse"]
+    }
+  ],
+  "inputs": [
+    {
+      "name": "Jenkins server URL",
+      "description": "Jenkins server URL",
+      "type": "text",
+      "target": "executor",
+      "field": "JENKINS_SERVER_URL"
+    },
+    {
+      "name": "Jenkins folder name",
+      "description": "Jenkins folder name",
+      "type": "text",
+      "target": "executor",
+      "field": "JENKINS_FOLDER_NAME"
+    },
+    {
+      "name": "Jenkins username",
+      "description": "Jenkins username",
+      "type": "text",
+      "target": "executor",
+      "field": "JENKINS_USERNAME"
+    },
+    {
+      "name": "Jenkins API Key",
+      "description": "Jenkins API Key",
+      "type": "password",
+      "target": "executor",
+      "field": "JENKINS_API_KEY"
+    },
+    {
+      "name": "AWS Access Key ID",
+      "description": "Access key ID used to sign programmatic requests to AWS",
+      "type": "text",
+      "target": "executor",
+      "field": "DEPLOY_AWS_ID"
+    },
+    {
+      "name": "AWS secret access key",
+      "description": "Secret access key used to sign programmatic requests to AWS",
+      "type": "password",
+      "target": "executor",
+      "field": "DEPLOY_AWS_SECRET"
+    },
+    {
+      "name": "Docker username",
+      "description": "Docker username for logging in to the registry where the images will be pushed. Only matters when using a custom Docker registry",
+      "type": "text",
+      "target": "executor",
+      "field": "DOCKER_USERNAME",
+      "optional": true
+    },
+    {
+      "name": "Docker password",
+      "description": "Docker password for logging in to the registry where the images will be pushed. Only matters when using a custom Docker registry",
+      "type": "password",
+      "target": "executor",
+      "field": "DOCKER_PASSWORD",
+      "optional": true
+    },
+    {
+      "name": "Tags for the AWS EKS cluster",
+      "description": "Additional tags for creating the EKS cluster. Format: Key=string,Contact=john.doe@eficode.com,Department=example-hki",
+      "type": "text",
+      "target": "executor",
+      "field": "EKS_TAGS",
+      "optional": true
+    },
+    {
+      "name": "Grafana password",
+      "description": "Strong password to be used for authenticating to the Grafana frontend available at grafana-[PUBLIC ADDRESS]. The default username is admin. Required if using Grafana.",
+      "type": "password",
+      "target": "executor",
+      "field": "GRAFANA_PASS",
+      "optional": true
+    }
+  ],
+  "executable": "template/jenkins.py",
+  "postActions": {}
+}

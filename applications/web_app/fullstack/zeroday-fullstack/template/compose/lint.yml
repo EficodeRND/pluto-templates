@@ -1,0 +1,10 @@
+version: '2'
+
+services:
+  lint-backend:
+    build: backend
+    command: npm run lint
+
+  lint-frontend:
+    build: frontend
+    command: npm run lint

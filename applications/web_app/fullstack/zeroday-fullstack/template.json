@@ -1,0 +1,77 @@
+{
+    "name": "Zeroday fullstack",
+    "description": "Fullstack template from Zeroday using Node.js and React",
+    "documentation": [
+        "https://reactjs.org/",
+        "applications/web_app/fullstack/zeroday-fullstack/template/README.md"
+    ],
+    "appType": "backend",
+    "inputs": [
+        {
+            "name": "Project author",
+            "description": "Project author for package.json. Example: John Smith <john.smith@eficode.com>",
+            "type": "text",
+            "target": "template",
+            "field": "PROJECT_AUTHOR"
+        },
+        {
+            "name": "Project description",
+            "description": "Project description for package.json.",
+            "type": "text",
+            "target": "template",
+            "field": "PROJECT_DESCRIPTION",
+            "optional": true
+        }
+    ],
+    "dockerComposeSnippet": {
+        "db": {
+            "build": "db",
+            "environment": {
+              "POSTGRES_DB": "demo",
+              "POSTGRES_PASSWORD": "demo",
+              "POSTGRES_USER": "demo"
+            },
+            "ports": [
+              "5432:5432"
+            ]
+        },
+        "backend-dev": {
+            "build": "backend",
+            "command": "./wait-for.sh db:5432 -- npm run dev",
+            "environment": {
+                "FRONTEND": "http://localhost:8000",
+                "DATABASE_URL": "postgres://demo:demo@db/demo",
+                "NODE_ENV": "development"
+            },
+            "volumes": [
+                "./backend/src:/usr/src/app/src"
+            ],
+            "ports": [
+                "9000:9000",
+                "9229:9229"
+            ],
+            "depends_on": [
+                "db"
+            ],
+            "links": [
+                "db"
+            ]
+        },
+        "frontend-dev": {
+            "build": "frontend",
+            "environment": {
+                "NODE_ENV": "development",
+                "ENDPOINT": "http://localhost:9000/api"
+            },
+            "volumes": [
+                "./frontend/src:/usr/src/app/src"
+            ],
+            "ports": [
+                "80:8000"
+            ]
+        }
+    },
+    "postActions": {
+        "Jenkins": ["To set up the Jenkins pipeline, run the 'Jenkins' executor script in Sprout."]
+    }
+}

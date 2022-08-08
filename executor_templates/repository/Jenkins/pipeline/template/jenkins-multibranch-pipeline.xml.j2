@@ -1,0 +1,73 @@
+<org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject plugin="workflow-multibranch@712.vc169a_1387405">
+	<actions/>
+	<description></description>
+	<properties>
+		<org.jenkinsci.plugins.configfiles.folder.FolderConfigFileProperty plugin="config-file-provider@3.10.0">
+			<configs class="sorted-set">
+				<comparator class="org.jenkinsci.plugins.configfiles.ConfigByIdComparator"/>
+			</configs>
+		</org.jenkinsci.plugins.configfiles.folder.FolderConfigFileProperty>
+		<org.jenkinsci.plugins.docker.workflow.declarative.FolderConfig plugin="docker-workflow@1.28">
+			<dockerLabel/>
+			<registry plugin="docker-commons@1.19"/>
+		</org.jenkinsci.plugins.docker.workflow.declarative.FolderConfig>
+	</properties>
+	<folderViews class="jenkins.branch.MultiBranchProjectViewHolder" plugin="branch-api@2.1046.v0ca_37783ecc5">
+		<owner class="org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" reference="../.."/>
+	</folderViews>
+	<healthMetrics>
+		<com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric plugin="cloudbees-folder@6.722.v8165b_a_cf25e9">
+			<nonRecursive>false</nonRecursive>
+		</com.cloudbees.hudson.plugins.folder.health.WorstChildHealthMetric>
+	</healthMetrics>
+	<icon class="jenkins.branch.MetadataActionFolderIcon" plugin="branch-api@2.1046.v0ca_37783ecc5">
+		<owner class="org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" reference="../.."/>
+	</icon>
+	<orphanedItemStrategy class="com.cloudbees.hudson.plugins.folder.computed.DefaultOrphanedItemStrategy" plugin="cloudbees-folder@6.722.v8165b_a_cf25e9">
+		<pruneDeadBranches>true</pruneDeadBranches>
+		<daysToKeep>-1</daysToKeep>
+		<numToKeep>-1</numToKeep>
+		<abortBuilds>false</abortBuilds>
+	</orphanedItemStrategy>
+	<triggers>
+		<com.igalg.jenkins.plugins.mswt.trigger.ComputedFolderWebHookTrigger plugin="multibranch-scan-webhook-trigger@1.0.9">
+			<spec/>
+			<token>{{ ctx.values['ct_webhook_token'] }}</token>
+		</com.igalg.jenkins.plugins.mswt.trigger.ComputedFolderWebHookTrigger>
+	</triggers>
+	<disabled>false</disabled>
+	<sources class="jenkins.branch.MultiBranchProject$BranchSourceList" plugin="branch-api@2.1046.v0ca_37783ecc5">
+		<data>
+			<jenkins.branch.BranchSource>
+				<source class="org.jenkinsci.plugins.github_branch_source.GitHubSCMSource" plugin="github-branch-source@1637.vd833b_7ca_7654">
+					<id>7e24a938-d260-4468-9af5-51c98e57d681</id>
+					<apiUri>https://api.github.com</apiUri>
+					<credentialsId>SproutJenkinsGitHubApp</credentialsId>
+					<repoOwner>{{ ctx.values['ct_repo_owner'] }}</repoOwner>
+					<repository>{{ ctx.values['ct_repo_name'] }}</repository>
+					<repositoryUrl>{{ ctx.values['ct_repo_url'] }}</repositoryUrl>
+					<traits>
+						<org.jenkinsci.plugins.github__branch__source.BranchDiscoveryTrait>
+							<strategyId>1</strategyId>
+						</org.jenkinsci.plugins.github__branch__source.BranchDiscoveryTrait>
+						<org.jenkinsci.plugins.github__branch__source.OriginPullRequestDiscoveryTrait>
+							<strategyId>1</strategyId>
+						</org.jenkinsci.plugins.github__branch__source.OriginPullRequestDiscoveryTrait>
+						<org.jenkinsci.plugins.github__branch__source.ForkPullRequestDiscoveryTrait>
+							<strategyId>1</strategyId>
+							<trust class="org.jenkinsci.plugins.github_branch_source.ForkPullRequestDiscoveryTrait$TrustPermission"/>
+						</org.jenkinsci.plugins.github__branch__source.ForkPullRequestDiscoveryTrait>
+					</traits>
+				</source>
+				<strategy class="jenkins.branch.DefaultBranchPropertyStrategy">
+					<properties class="empty-list"/>
+				</strategy>
+			</jenkins.branch.BranchSource>
+		</data>
+		<owner class="org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" reference="../.."/>
+	</sources>
+	<factory class="org.jenkinsci.plugins.workflow.multibranch.WorkflowBranchProjectFactory">
+		<owner class="org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject" reference="../.."/>
+		<scriptPath>Jenkinsfile</scriptPath>
+	</factory>
+</org.jenkinsci.plugins.workflow.multibranch.WorkflowMultiBranchProject>

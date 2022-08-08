@@ -1,0 +1,23 @@
+{{- if .Values.global.installIngress -}}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana
+spec:
+  tls:
+  - hosts:
+    - grafana-{{ .Values.global.host }}
+    secretName: common-tls-certificate
+  ingressClassName: nginx
+  rules:
+  - host: grafana-{{ .Values.global.host }}
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: monitoring-grafana
+            port:
+              number: 80
+{{- end -}}
