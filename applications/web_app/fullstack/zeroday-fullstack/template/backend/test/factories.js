@@ -5,7 +5,7 @@ let i = 0;
 
 const email = () => {
   i += 1;
-  return `test${i}@test.com`;
+  return `test${i}@test.com.invalid`;
 };
 
 const password = () => {

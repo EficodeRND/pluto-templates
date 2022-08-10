@@ -77,11 +77,11 @@ describe('Facebook Login', () => {
   var testUsers = {
     '106703763266783': {
       name: 'Dave Alaghadgicfee Valtchanovwitz',
-      email: 'rmknpulqlu_1496817297@tfbnw.net',
+      email: 'rmknpulqlu_1496817297@tfbnw.net.invalid',
     },
     '102386193701630': {
       name: 'Will Alagijgdhedfg Fergiewitz',
-      email: 'pxygsppwyt_1496817296@tfbnw.net',
+      email: 'pxygsppwyt_1496817296@tfbnw.net.invalid',
     },
   };
 
