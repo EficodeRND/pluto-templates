@@ -1,5 +1,5 @@
 {
-  "name": "GitHub Jenkins pipeline setup script",
+  "name": "GitHub Jenkins pipeline setup",
   "description": "Creates a Jenkins pipeline for a GitHub Repository",
   "documentation": [
     "README.md"
