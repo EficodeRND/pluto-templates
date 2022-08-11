@@ -72,6 +72,6 @@
         }
     },
     "postActions": {
-        "Jenkins": ["To set up the Jenkins pipeline, run the 'Jenkins' executor script in Sprout."]
+        "Jenkins": ["To set up the Jenkins pipeline, run the 'GitHub Jenkins pipeline setup' action in Sprout."]
     }
 }
