@@ -43,6 +43,7 @@ SignUp = reduxForm({
 const mapStateToProps = (state) => ({
   user: state.auth.user,
   authError: state.auth.error,
+  locale: state.language.locale,
 });
 const mapDispatchToProps = (dispatch) => (bindActionCreators({
   loginWithFacebook: authActions.loginWithFacebook,

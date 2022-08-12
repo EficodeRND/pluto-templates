@@ -29,6 +29,7 @@ const AuthPage = (props) => {
     loginWithGoogle,
     loginWithFacebook,
     authError,
+    locale,
   } = props;
   return (
     <div className="login">
@@ -60,7 +61,7 @@ const AuthPage = (props) => {
             <Translatable capitalize translationKey="lost_password" />
           </Link>
         )}
-        {!resetPasswordPage
+        {!resetPasswordPage && !requestPasswordChangePage
           && (
             <div>
               <Divider />
@@ -71,6 +72,7 @@ const AuthPage = (props) => {
                 onError={() => {
                   loginWithGoogle(null, false);
                 }}
+                locale={locale}
               />
               <Button
                 fluid
@@ -105,6 +107,7 @@ AuthPage.propTypes = {
   loginWithGoogle: PropTypes.func,
   loginWithFacebook: PropTypes.func,
   authError: PropTypes.string,
+  locale: PropTypes.string,
   ...propTypes,
 };
 
