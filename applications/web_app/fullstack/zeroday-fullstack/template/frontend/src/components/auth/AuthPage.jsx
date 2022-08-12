@@ -5,6 +5,7 @@ import {
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import { propTypes } from 'redux-form';
+import { GoogleLogin } from '@react-oauth/google';
 
 import ErrorMessage from './ErrorMessage';
 import AuthButtonGroup from './AuthButtonGroup';
@@ -63,16 +64,14 @@ const AuthPage = (props) => {
           && (
             <div>
               <Divider />
-              <Button
-                fluid
-                basic
-                color="black"
-                className="oauth-login-btn"
-                onClick={() => loginWithGoogle()}
-              >
-                <img alt="" className="google-login-icon" src="/images/google.svg" />
-                <Translatable capitalize translationKey="google_login" />
-              </Button>
+              <GoogleLogin
+                onSuccess={(credentialResponse) => {
+                  loginWithGoogle(credentialResponse.credential);
+                }}
+                onError={() => {
+                  loginWithGoogle(null, false);
+                }}
+              />
               <Button
                 fluid
                 color="facebook"

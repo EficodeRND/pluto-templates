@@ -2,7 +2,6 @@ import * as types from './actionTypes';
 
 const signupSuccess = (data) => ({ type: types.SIGNUP_SUCCESS, payload: data });
 const signupFailure = (error) => ({ type: types.SIGNUP_FAILURE, payload: error });
-const loginAttempt = (authProvider) => ({ type: types.LOGIN_ATTEMPT, payload: authProvider });
 const loginSuccess = (user) => ({ type: types.LOGIN_SUCCESS, payload: user });
 const loginFailure = (error) => ({ type: types.LOGIN_FAILURE, payload: error });
 
@@ -40,13 +39,13 @@ export const loginWithFacebook = () => async (dispatch, getState, api) => {
   }, { scope: 'public_profile,email' });
 };
 
-export const loginWithGoogle = () => async (dispatch, getState, api) => {
-  dispatch(loginAttempt('Google Oauth2'));
-  const authInstance = window.gapi.auth2.getAuthInstance();
+export const loginWithGoogle = (credential, success = true) => async (dispatch, getState, api) => {
+  if(!success) {
+    dispatch(signupFailure('Login failed'));
+    return;
+  }
   try {
-    const oauthResponse = await authInstance.signIn();
-    const authResponse = await oauthResponse.reloadAuthResponse();
-    const response = await api.post('/google/signin', { access_token: authResponse.access_token });
+    const response = await api.post('/google/signin', { access_token: credential });
     localStorage.setItem('user', JSON.stringify(response));
     dispatch(loginSuccess(response));
   } catch (error) {
