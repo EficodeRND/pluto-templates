@@ -84,6 +84,46 @@
       "target": "executor",
       "field": "GRAFANA_PASS",
       "optional": true
+    },
+    {
+      "name": "Google OAuth ID",
+      "description": "OAuth ID for the Google login",
+      "type": "text",
+      "target": "executor",
+      "field": "GOOGLE_OAUTH_ID",
+      "optional": true
+    },
+    {
+      "name": "Google OAuth secret",
+      "description": "OAuth secret for the Google login",
+      "type": "password",
+      "target": "executor",
+      "field": "GOOGLE_OAUTH_SECRET",
+      "optional": true
+    },
+    {
+      "name": "Nodemailer SMTP host",
+      "description": "SMTP host for Nodemailer",
+      "type": "text",
+      "target": "executor",
+      "field": "NODEMAILER_SMTP_HOST",
+      "optional": true
+    },
+    {
+      "name": "Nodemailer username",
+      "description": "Username for Nodemailer",
+      "type": "text",
+      "target": "executor",
+      "field": "NODEMAILER_USER",
+      "optional": true
+    },
+    {
+      "name": "Nodemailer password",
+      "description": "Password for Nodemailer",
+      "type": "password",
+      "target": "executor",
+      "field": "NODEMAILER_PASS",
+      "optional": true
     }
   ],
   "executable": "template/jenkins.py",
