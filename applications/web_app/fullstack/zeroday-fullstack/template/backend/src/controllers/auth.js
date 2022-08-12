@@ -1,6 +1,6 @@
 const passport = require('koa-passport');
+const { OAuth2Client } = require('google-auth-library');
 const FacebookStrategy = require('passport-facebook-token');
-const GoogleTokenStrategy = require('passport-google-token').Strategy;
 const { Op } = require('sequelize');
 const crypto = require('crypto');
 const _ = require('lodash');
@@ -77,65 +77,6 @@ if (config.FACEBOOK_APP_ID) {
     user = await database.User.create(options);
     return done(null, user);
   }));
-}
-
-if (config.GOOGLE_OAUTH_ID) {
-  passport.use(new GoogleTokenStrategy(
-    {
-      clientID: config.GOOGLE_OAUTH_ID,
-      clientSecret: config.GOOGLE_OAUTH_SECRET,
-    },
-    async (accessToken, refreshToken, profile, done) => {
-      let user = await database.User.findOne({
-        where: {
-          google_id: {
-            [Op.eq]: profile.id,
-          },
-        },
-      });
-
-      const email = _.get(profile, 'emails[0].value');
-
-      /*
-      // Simple example knowing if user has Eficode email address
-      if (!/.*@eficode\.com/.test(email)) {
-        // If user doesn't have Eficode email then 401 Unauthorized
-        return done(null, false, {message: 'Invalid Eficode account'});
-      }
-      */
-
-      if (!user && email) {
-        user = await database.User.findOne({
-          where: {
-            email: {
-              [Op.eq]: email.toLowerCase(),
-            },
-          },
-        });
-      }
-
-      const options = {
-        firstname: profile.name.givenName,
-        lastname: profile.name.familyName,
-        imageUrl: profile._json.picture, // eslint-disable-line no-underscore-dangle
-        locale: config.DEFAULT_LOCALE,
-      };
-
-      if (user) {
-        user = await user.update(options);
-        return done(null, user);
-      }
-
-      options.googleId = profile.id;
-
-      if (email) {
-        options.email = email;
-      }
-
-      user = await database.User.create(options);
-      return done(null, user);
-    },
-  ));
 }
 
 /**
@@ -388,14 +329,57 @@ exports.googleSignIn = async (ctx) => {
     logger.error('ERROR: GOOGLE_OAUTH_ID is empty.');
     ctx.throw(500, 'Internal server error.');
   } else {
-    await passport.authenticate('google-token').call(this, ctx, async () => {
-      const { user } = ctx.state;
+    const client = new OAuth2Client(config.GOOGLE_OAUTH_ID);
 
-      const { accessToken } = await oauth.generateTokens(user.toJSON(), config.SECRET);
+    let ticket;
+    try {
+      ticket = await client.verifyIdToken({
+        idToken: ctx.request.body.access_token
+      });
+    } catch(e) {
+      ctx.throw(401, 'Token validation failed.');
+    }
 
-      ctx.body = { ...user.toJSON(), email: user.email, token: accessToken };
-      ctx.status = 200;
+    const payload = ticket.getPayload();
+    const userid = payload.sub;
+    const email = payload.email;
+
+    let user = await database.User.findOne({
+      where: {
+        google_id: {
+          [Op.eq]: userid,
+        },
+      },
     });
+
+    if (!user) {
+      user = await database.User.findOne({
+        where: {
+          email: {
+            [Op.eq]: email.toLowerCase(),
+          },
+        },
+      });
+    }
+
+    const options = {
+      firstname: payload.given_name,
+      lastname: payload.family_name,
+      imageUrl: payload.picture,
+      locale: config.DEFAULT_LOCALE,
+    };
+
+    if (user) {
+      user = await user.update(options);
+    } else {
+      options.googleId = userid;
+      options.email = email;
+      user = await database.User.create(options);
+    }
+
+    const { accessToken } = await oauth.generateTokens(user.toJSON(), config.SECRET);
+    ctx.body = { ...user.toJSON(), email: user.email, token: accessToken };
+    ctx.status = 200;
   }
 };
 
