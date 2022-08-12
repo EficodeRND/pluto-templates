@@ -1,0 +1,199 @@
+@font_family: 'Rubik', sans-serif;
+
+
+/* Eficolors */
+@black: #000000;
+@yellow: #fbe700;
+@green: #00a878;
+@light_green: #d8f1a0;
+@light_orange: #f3c178;
+@red: #f25757;
+@blue: #0088c2;
+@white: #ffffff;
+
+@background_color: @white;
+
+@primary_color: #2a2a2a;
+@link_color: #3098A1;
+
+
+/*
+#fbe700 - Yellow
+#000000 - Black
+#00a878 - Green
+#d8f1a0 - Light green
+#f3c178 - Light Orange
+#ff773d - Bright Orange
+#f25757 - Red
+#0088c2 - Blue
+*/
+
+body {
+  font-family: @font_family !important;
+  background-color: @background_color;
+  height: auto;
+}
+
+h1, h2, h3, h4 {
+  font-family: @font_family !important;
+}
+
+#app, #app > div {
+  height: 100%;
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: 500;
+  color: @primary_color;
+}
+
+a {
+  color: @link_color;
+  transition: all 0.5s ease;
+}
+
+.login, .resetpassword {
+  width: 350px;
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 100px;
+
+  a .button {
+    margin-top: 10px;
+  }
+
+  p.disclaimer {
+    margin-top: 50px;
+    font-family: @font_family !important;
+    font-size: 14px;
+    text-align: center;
+    color: @primary_color;
+  }
+}
+
+.menu.fixed {
+  height: 60px;
+  box-shadow: none;
+}
+
+.form {
+  text-align: left;
+  margin-bottom: 15px;
+}
+
+.registration {
+  height: 100%;
+  margin: 0 auto;
+  background: @background_color;
+  img {
+    max-width: 500px;
+  }
+  .content-wrapper {
+    width: 900px;
+    margin: 0 auto;
+    padding-top: 250px;
+  }
+}
+
+.section-main {
+  min-height:100%;
+  padding-bottom:50px;
+  box-sizing:border-box;
+  &.home {
+    background: @background_color;
+  }
+}
+.main-wrapper {
+  padding: 60px 0;
+  border-top: solid 1px #e8e8e8;
+
+  .main {
+    max-width: 1200px;
+    margin: 20px auto;
+  }
+}
+
+.jumbotron-wrapper {
+  background: #fff;
+  width: 100%;
+  text-align: center;
+
+  .jumbotron {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 120px 0;
+    h1 {
+      font-size: 70px;
+      font-weight: 500;
+      letter-spacing: 0.4px;
+    }
+    p {
+      font-size: 18px;
+      letter-spacing: 0.4px;
+    }
+  }
+}
+
+.footer {
+  background-color: #fff;
+  border-top: 1px solid #e8e8e8;
+  box-sizing:border-box;
+  position: absolute;
+  margin-top: -50px;
+  height: 50px;
+  left: 0;
+  width: 100%;
+  padding: 0 20px;
+  display: table;
+  p {
+    color: #A5A5A5;
+    padding: 0;
+    margin: 0;
+    font-size: 12px;
+  }
+  p a {
+    color: #A5A5A5;
+    text-decoration: underline;
+  }
+  p a:hover {
+    color: #A5A5A5;
+    text-decoration: none;
+  }
+}
+.footer-content {
+  display: table-cell;
+  text-align: center;
+  vertical-align: middle;
+  height: 100%;
+}
+
+.login-logo {
+  max-width: 100%;
+}
+
+.navbar-logo {
+  max-height: 100%;
+}
+
+.login-btn {
+  color: @black !important;
+  background-color: white !important;
+}
+
+.google-login-icon {
+  padding-right: 15px;
+  //padding-left: 15px;
+  height: 15px;
+}
+
+.oauth-login-btn {
+  margin-top: 5px !important;
+  margin-bottom: 5px !important;
+}
+
+.ui.modal.transition.visible.active {
+  // There is a bug in Semantic UI and modal is not centered properly. This may not be necessary with later Semantic versions.
+  margin-top: 0px !important;
+}

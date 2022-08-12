@@ -1,0 +1,90 @@
+name: Deploy to AWS
+on:
+  push:
+    branches:
+      - 'main'
+      - 'staging'
+      - 'production'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Check deploy pre-requisites
+      run: helm version && kubectl version --client=true && aws --version
+
+    - name: Import environment variables from .env.deploy
+      run: cat .env.deploy >> ${{github.env}} && cat .env.deploy
+
+    - name: Set deploy namespace to main
+      if: endsWith(github.ref,  'main')
+      run: echo DEPLOY_NAMESPACE=development >> ${{github.env}}
+
+    - name: Set deploy namespace to branch name
+      if: ${{ !endsWith(github.ref,  'main') }}
+      env:
+        ref: ${{ github.ref }}
+      run: echo DEPLOY_NAMESPACE=${ref##*/} >> ${{github.env}}
+
+    - name: Set deploy mode to development
+      run: echo DEPLOY_MODE=dev >> ${{github.env}}
+
+    - name: Set deploy mode to production
+      if: endsWith(github.ref,  'production') || endsWith(github.ref,  'staging')
+      run: echo DEPLOY_MODE=prod >> ${{github.env}}
+
+    - name: Pull image
+      run: docker-compose pull
+
+    - name: Cache images
+      uses: satackey/action-docker-layer-caching@v0.0.11
+      continue-on-error: true
+
+    - name: Build
+      run: chmod u+x build-deploy.sh && ./build-deploy.sh -m $DEPLOY_MODE
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.DEPLOY_AWS_ID }}
+        aws-secret-access-key: ${{ secrets.DEPLOY_AWS_SECRET }}
+        aws-region: ${{ env.DEPLOY_AWS_REGION }}
+
+    - name: Setup AWS
+      run: chmod u+x setup-aws.sh && ./setup-aws.sh
+      env:
+        DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+        DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+        DOCKER_EMAIL: ${{ secrets.DOCKER_EMAIL }}
+        EKS_TAGS: ${{ secrets.EKS_TAGS }}
+
+    - name: Push to Docker registry
+      run: chmod u+x ./push.sh && ./push.sh -m $DEPLOY_MODE
+
+    - name: Run deploy script
+      env: 
+        FACEBOOK_APP_SECRET: ${{ secrets.FACEBOOK_APP_SECRET }}
+        GOOGLE_OAUTH_SECRET: ${{ secrets.GOOGLE_OAUTH_SECRET }}
+        FACEBOOK_APP_ID: ${{ secrets.FACEBOOK_APP_ID }}
+        GOOGLE_OAUTH_ID: ${{ secrets.GOOGLE_OAUTH_ID }}
+        NODEMAILER_SMTP_HOST: ${{ secrets.NODEMAILER_SMTP_HOST }}
+        NODEMAILER_USER: ${{ secrets.NODEMAILER_USER }}
+        NODEMAILER_PASS: ${{ secrets.NODEMAILER_PASS }}
+      run: >
+        chmod u+x deploy.sh && ./deploy.sh
+        -m $DEPLOY_MODE
+        -n $DEPLOY_NAMESPACE
+        -f
+
+    - name: Install monitoring and logging
+      if: env.DEPLOY_MONITORING == 'true'
+      env:
+        GRAFANA_PASS: ${{secrets.GRAFANA_PASS}}
+      run: >
+        chmod u+x install-monitoring.sh && ./install-monitoring.sh

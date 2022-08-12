@@ -1,0 +1,89 @@
+prometheus:
+  rbac:
+    create: true
+  serviceAccounts:
+    server:
+      create: true
+      name: user-x-sa
+  alertmanager:
+    enabled: false
+  pushgateway:
+    enabled: false
+  networkPolicy:
+    enabled: false
+  nodeExporter:
+    enabled: true
+  kubeStateMetrics:
+    enabled: true
+  server:
+    retention: "1d"
+    resources:
+      limits:
+        cpu: 250m
+        memory: 512Mi
+      requests:
+        cpu: 250m
+        memory: 256Mi
+    service:
+      type: ClusterIP
+      servicePort: 90
+
+loki-stack:
+  rbac:
+    create: true
+    pspEnabled: false
+  service:
+    type: ClusterIP
+    port: 80
+  promtail:
+    config:
+      lokiAddress: http://monitoring-loki:3100/loki/api/v1/push
+grafana:
+  datasources:
+    datasources.yaml:
+      apiVersion: 1
+      datasources:
+      - name: prometheus
+        type: prometheus
+        access: proxy
+        url: http://monitoring-prometheus-server:90
+        isDefault: true
+        editable: false
+      - name: loki
+        type: loki
+        editable: false
+        url: http://monitoring-loki:3100
+  service:
+    enabled: true
+    type: ClusterIP
+    port: 80
+    targetPort: 3000
+  resources:
+    limits:
+      cpu: 250m
+      memory: 256Mi
+    requests:
+      cpu: 250m
+      memory: 128Mi
+  persistence:
+    type: pvc
+    enabled: true
+    accessModes:
+      - ReadWriteOnce
+    size: 10Gi
+  admin:
+    existingSecret: grafana
+  dashboardProviders:
+    dashboardproviders.yaml:
+      apiVersion: 1
+      providers:
+      - name: 'default'
+        orgId: 1
+        folder: ''
+        type: file
+        disableDeletion: false
+        editable: true
+        options:
+          path: /var/lib/grafana/dashboards/default
+  dashboardsConfigMaps:
+    default: "dashboard-configmap"

@@ -1,0 +1,89 @@
+name: Trivy security scan
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  trivy-scan:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Create results folder
+      run: mkdir results
+
+    - name: Download template file
+      run: curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl > html.tpl
+
+    {% if ctx.current_template['parameters']['SCAN_DOCKER'] -%}
+    # Trivy has to be installed manually instead of using the action because this makes it easier to run it against
+    # all Docker containers built by docker-compose build.
+    - name: Install Trivy
+      run: |
+        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add - && \
+        echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list && \
+        sudo apt update && sudo apt install trivy -y
+
+    - name: Scan the repo with Trivy - Medium
+      run: |
+        trivy fs --exit-code 0 --no-progress \
+        --ignore-unfixed --skip-dirs .devcontainer \
+        --severity MEDIUM --security-checks vuln,config,secret \
+        --format template --template @./html.tpl --output results/trivy-fs-0.html ./
+
+    - name: Scan the repo with Trivy - High and critical
+      run: |
+        trivy fs --exit-code 1 --no-progress \
+        --ignore-unfixed --skip-dirs .devcontainer \
+        --severity HIGH,CRITICAL --security-checks vuln,config,secret \
+        --format template --template @./html.tpl --output results/trivy-fs-1.html ./
+
+    - name: Build containers
+      run: docker-compose build
+
+    - name: Run Trivy image scanning
+      run: |
+        for image in `docker compose config --images`; do
+          echo "Scanning docker image: $image"
+          trivy image --exit-code 0 --no-progress --ignore-unfixed \
+            --severity MEDIUM --security-checks vuln,config,secret \
+            --format template --template @./html.tpl --output results/trivy-image-$image-0.html $image
+          trivy image --exit-code 1 --no-progress --ignore-unfixed \
+            --severity HIGH,CRITICAL --security-checks vuln,config,secret \
+            --format template --template @./html.tpl --output results/trivy-image-$image-1.html $image
+        done
+    {% else %}
+    - name: Scan the repo with Trivy - Medium
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        security-checks: vuln,config,secret
+        exit-code: 0
+        ignore-unfixed: true
+        skip-dirs: .devcontainer
+        severity: 'MEDIUM'
+        format: 'template'
+        template: '@./html.tpl'
+        output: 'results/trivy-results-0.html'
+
+    - name: Scan the repo with Trivy - High and critical
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        security-checks: vuln,config,secret
+        exit-code: 1
+        ignore-unfixed: true
+        skip-dirs: .devcontainer
+        severity: 'HIGH,CRITICAL'
+        format: 'template'
+        template: '@./html.tpl'
+        output: 'results/trivy-results-1.html'
+    {% endif %}
+
+    - name: Upload Trivy result files
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: Trivy security scan results
+        path: results/

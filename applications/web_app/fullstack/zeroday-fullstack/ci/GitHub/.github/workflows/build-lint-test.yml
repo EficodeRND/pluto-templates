@@ -1,0 +1,64 @@
+name: build-test-lint
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-test-lint:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Pull image
+      run: docker-compose pull
+
+    - name: Cache images
+      uses: satackey/action-docker-layer-caching@v0.0.11
+      continue-on-error: true
+
+    - name: Set UID and GID env variables
+      run: |
+        echo UID=`id -u` >> ${{github.env}}
+        echo GID=`id -g` >> ${{github.env}}
+
+    - name: Create results folders
+      run: mkdir -p coverage results/mocha results/robot
+
+    - name: Build
+      run: chmod +x build.sh && ./build.sh
+
+    - name: Lint backend
+      run: docker-compose --verbose --log-level debug --project-directory . -f compose/lint.yml run lint-backend
+
+    - name: Lint frontend
+      run: docker-compose --verbose --log-level debug --project-directory . -f compose/lint.yml run lint-frontend
+
+    - name: Run unit tests
+      run: docker-compose --verbose --log-level debug --project-directory . -f compose/db-test.yml -f compose/test.yml run mocha
+
+    - name: Run acceptance tests
+      run: docker-compose --verbose --project-directory . -f compose/robot.yml -f compose/db-test.yml run robot
+
+    - name: Publish unit tests results
+      uses: EnricoMi/publish-unit-test-result-action@v1
+      if: always()
+      with:
+        files: results/mocha/test-results.xml
+        check_name: Unit test results
+        comment_mode: off
+
+    - name: Publish acceptance tests results
+      uses: EnricoMi/publish-unit-test-result-action@v1
+      if: always()
+      with:
+        files: results/robot/xunit.xml
+        check_name: Robot Framework test results
+        comment_mode: off
+
+    - name: Upload Robot Framework result files
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: Robot Framework result files
+        path: results/robot/

@@ -1,0 +1,15 @@
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: {{ (printf "%s-db-pv" .Release.Namespace | quote ) }}
+  labels:
+    {{- include "database.labels" . | nindent 4 }}
+spec:
+  storageClassName: {{ .Values.global.persistence.db.storageClassName | quote }}
+  capacity:
+    storage: {{ .Values.global.persistence.db.storage | quote }}
+  accessModes:
+    - {{ .Values.global.persistence.db.accessModes | quote }}
+  {{ .Values.global.persistence.db.plugin.name | quote }}:
+    path: {{ (printf "%s/%s" .Values.global.persistence.db.plugin.path .Release.Namespace) | quote }}

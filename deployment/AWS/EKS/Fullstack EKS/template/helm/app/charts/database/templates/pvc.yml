@@ -1,0 +1,16 @@
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: {{ include "database.pvcName" . }}
+  labels:
+    {{- include "database.labels" . | nindent 4 }}
+spec:
+  {{- if .Values.global.persistence.db.storageClassName }}
+  storageClassName: {{ .Values.global.persistence.db.storageClassName | quote }}
+  {{ end }}
+  accessModes:
+    - {{ .Values.global.persistence.db.accessModes | quote }}
+  resources:
+    requests:
+      storage: {{ .Values.global.persistence.db.storage | quote }}

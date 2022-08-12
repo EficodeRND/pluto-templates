@@ -1,0 +1,16 @@
+{
+  "name": "Slack notifications",
+  "description": "Sends notifications to Slack with the status of GitHub Actions after they run.",
+  "inputs": [
+    {
+      "name": "Incoming Webhook URL",
+      "description": "Set up Incoming Webhooks on Slack following this guide, and paste the webhook URL: https://api.slack.com/messaging/webhooks",
+      "type": "text",
+      "target": "ci-secrets",
+      "field": "SLACK_WEBHOOK_URL"
+    }
+  ],
+  "postActions": {
+    "GitHub": ["To add Slack notifications to a GitHub Actions workflow, add the workflow name to the `workflows` array on `.github/workflows/slack-notifications.yml`"]
+  }
+}

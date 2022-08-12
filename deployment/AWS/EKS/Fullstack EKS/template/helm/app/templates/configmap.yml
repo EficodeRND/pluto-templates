@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.global.objects.names.configMapName | quote }}
+  labels:
+    {{- include "app.labels" . | nindent 4 }}
+data:
+  FRONTEND: {{ (printf "https://%s" .Values.global.host | quote) }}
+  PGDATA: {{ .Values.global.postgresDataDirectory | quote }}

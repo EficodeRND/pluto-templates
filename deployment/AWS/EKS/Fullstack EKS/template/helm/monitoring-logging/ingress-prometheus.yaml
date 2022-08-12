@@ -1,0 +1,24 @@
+# Applying this allows access to Prometheus from outside the cluster on the URL prometheus-DEPLOY_PUBLIC_ADDRESS_HERE.
+# This should not be used if Prometheus authentication has not been setup separately
+# Can be applied with kubectl apply -f ingress-prometheus.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-prometheus
+spec:
+  tls:
+  - hosts:
+    - prometheus-DEPLOY_PUBLIC_ADDRESS_HERE
+    secretName: common-tls-certificate
+  ingressClassName: nginx
+  rules:
+  - host: prometheus-DEPLOY_PUBLIC_ADDRESS_HERE
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: prometheus-server
+            port:
+              number: 90

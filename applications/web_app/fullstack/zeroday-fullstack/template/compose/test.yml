@@ -1,0 +1,22 @@
+version: '2'
+
+services:
+  mocha:
+    build:
+      context: backend
+      args:
+        - UID=${UID}
+        - GID=${UID}
+    command: ./wait-for.sh --timeout=150 db-test:5432 -- npm run test:coverage
+    environment:
+      DATABASE_URL: postgres://demo:demo@db-test/demo
+      GOOGLE_OAUTH_ID: ${GOOGLE_OAUTH_ID}
+      GOOGLE_OAUTH_SECRET: ${GOOGLE_OAUTH_SECRET}
+      SECRET: ${SECRET}
+      OUTPUT: /results/test-results.xml
+      NODE_ENV: test
+    volumes:
+      - ./results/mocha:/results
+      - ./coverage:/usr/src/app/coverage
+    depends_on:
+      - db-test

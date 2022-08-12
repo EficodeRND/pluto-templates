@@ -1,0 +1,46 @@
+---
+# Default values for node-react-project.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+backend:
+  image:
+    repository: # Specify with --set, full path e.g. repo.url/project/production/backend
+    tag: # Specify with --set. Defaults to chart.AppVersion.
+
+frontend:
+  image:
+    repository: # Specify with --set, full path e.g. repo.url/project/production/frontend
+    tag: # Specify with --set. Defaults to chart.AppVersion
+  service:
+    targetPort: 8000
+
+global:
+  host: # Specify with --set, full path e.g. repo.url/project/production/frontend
+
+  ingress:
+    enabled: true
+    annotations:
+      # kubernetes.io/ingress.class: nginx
+      ## Certificate options: A) Automated certificate management, only public sites (under 'annotations')
+      # kubernetes.io/tls-acme: "true"
+    ## Certificate options: B) Manual certificate (tls block below)
+    tls:
+      - secretName: common-tls-certificate
+    backend:
+      hosts:
+      - paths: [ /api ]
+    frontend:
+      hosts:
+      - paths: [ / ]
+
+  persistence:
+    db:
+      name: app-db
+      username: db-user
+      storageClassName: null
+      accessModes: ReadWriteOnce
+      storage: 1Gi
+      plugin:
+        name: hostPath
+        path: "/mnt/postgres/db"

@@ -1,0 +1,334 @@
+{% raw -%}
+import groovy.json.JsonSlurper
+
+deployNamespace = env.BRANCH_NAME == 'main' ? 'development' : env.BRANCH_NAME
+deployMode = (env.BRANCH_NAME == 'production' || env.BRANCH_NAME == 'staging') ? 'prod' : 'dev'
+deployedBranches = ['main', 'production', 'staging']
+
+pipeline {
+  agent {
+    label 'docker'
+  }
+
+  environment {
+    DOCKER_HOST = 'tcp://127.0.0.1:2375'
+    COMPOSE_HTTP_TIMEOUT  = 1000
+    UID = sh(script: "id -u", returnStdout: true).trim()
+    GID = sh(script: "id -g", returnStdout: true).trim()
+  }
+
+  options {
+    timeout(time: 30, unit: 'MINUTES')
+  }
+
+  stages {
+    stage('Checkout') {
+      steps {
+        setLatestStage()
+        checkout scm
+        notifyBuild('Started build')
+
+        script {
+          env.SLACK_CHANNEL = sh (
+            script: "grep ^SLACK_CHANNEL= .env.development | cut -d '=' -f2",
+            returnStdout: true
+          ).trim()
+
+          echo 'Environment variables read from .env.development:'
+          echo "SLACK_CHANNEL=${env.SLACK_CHANNEL}"
+
+          def props = readProperties file: '.env.deploy'
+          for (element in props) {
+            echo "${element.key}=${element.value}"
+            env."${element.key}" = element.value
+          }
+
+          env.PROJECT_NAME = env.DEPLOY_PROJECT_NAME
+        }
+      }
+    }
+
+    stage('Build') {
+      steps {
+        setLatestStage()
+        sh 'chmod u+x ./build.sh'
+        // TODO: cache docker images?
+        sh "./build.sh -m ${deployMode}"
+      }
+    }
+
+    stage('Lint') {
+      steps {
+        setLatestStage()
+        sh """\
+          docker-compose \
+          --verbose --log-level debug \
+          --project-directory . \
+          -f compose/lint.yml \
+          run lint-backend"""
+        sh """\
+          docker-compose \
+          --verbose --log-level debug \
+          --project-directory . \
+          -p ${env.PROJECT_NAME} \
+          -f compose/lint.yml \
+          run lint-frontend"""
+      }
+    }
+
+    stage('Unit Test') {
+      steps {
+        setLatestStage()
+
+        // Create results folders
+        sh 'mkdir -p coverage results/mocha'
+
+        sh """\
+          docker-compose \
+          --verbose --log-level debug \
+          --project-directory . \
+          -p ${env.PROJECT_NAME} \
+          -f compose/db-test.yml \
+          -f compose/test.yml \
+          run mocha"""
+      }
+    }
+
+    stage('Acceptance Test') {
+      steps {
+        setLatestStage()
+
+        // Create results folder
+        sh 'mkdir -p results/robot'
+
+        sh """\
+          docker-compose \
+          --verbose --project-directory . \
+          -p ${env.PROJECT_NAME} \
+          -f compose/robot.yml \
+          -f compose/db-test.yml \
+          run robot"""
+
+        step([
+          $class: 'RobotPublisher',
+          disableArchiveOutput: false,
+          logFileName: 'results/robot/log.html',
+          onlyCritical: true,
+          otherFiles: '',
+          outputFileName: 'results/robot/output.xml',
+          outputPath: '.',
+          passThreshold: 90,
+          reportFileName: 'results/robot/report.html',
+          unstableThreshold: 100
+        ]);
+      }
+    }
+{%- endraw %}
+
+    {% if ctx.templates['Jenkins_trivy-scan'] -%}
+    {% raw -%}
+    stage('Vulnerability Scan') {
+      steps {
+        setLatestStage()
+        sh 'mkdir vulnreports'
+        sh 'curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /tmp latest'
+        sh 'curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/html.tpl > html.tpl'
+
+        sh """
+          /tmp/trivy fs --exit-code 0 --no-progress \
+          --ignore-unfixed --skip-dirs .devcontainer \
+          --severity MEDIUM --security-checks vuln,config,secret \
+          --format template --template @./html.tpl -o vulnreports/trivy-fs-0.html ${WORKSPACE}"""
+        sh """
+          /tmp/trivy fs --exit-code 1 --no-progress \
+          --ignore-unfixed --skip-dirs .devcontainer \
+          --severity HIGH,CRITICAL --security-checks vuln,config,secret \
+          --format template --template @./html.tpl -o vulnreports/trivy-fs-1.html ${WORKSPACE}"""
+        {%- endraw %}
+        {% if ctx.templates['Jenkins_trivy-scan']['parameters']['SCAN_DOCKER'] %}
+        {% raw -%}
+        sh """#!/bin/bash
+          appcomponent=( frontend-${deployMode} backend-${deployMode} \$([[ ${deployMode} == "prod" ]] && echo "db" || echo "") );
+          for image in "\${appcomponent[@]}"; do
+            name=${env.PROJECT_NAME}_\$image
+            echo "Scanning docker image: \$name"
+            /tmp/trivy image --exit-code 0 --no-progress --ignore-unfixed \
+              --severity MEDIUM --security-checks vuln,config,secret \
+              --format template --template @./html.tpl -o vulnreports/trivy-image-\$name-0.html \$name
+            /tmp/trivy image --exit-code 1 --no-progress --ignore-unfixed \
+              --severity HIGH,CRITICAL --security-checks vuln,config,secret \
+              --format template --template @./html.tpl -o vulnreports/trivy-image-\$name-1.html \$name
+          done
+        """
+        {%- endraw %}
+        {%- endif %}
+      }
+    }
+    {%- endif %}
+
+    {% raw -%}
+    stage('Deploy') {
+      when {
+        anyOf { branch 'production'; branch 'main'; branch 'staging' }
+      }
+
+      environment {
+        AWS_CREDENTIALS = credentials("${env.PROJECT_NAME}_aws_credentials")
+        DOCKER_CREDENTIALS = credentials("${env.PROJECT_NAME}_docker_credentials")
+        EKS_CREDENTIAL = credentials("${env.PROJECT_NAME}_eks_credential")
+        GRAFANA_CREDENTIAL = credentials("${env.PROJECT_NAME}_grafana_credential")
+      }
+
+      steps {
+        setLatestStage()
+
+        echo 'Check deploy pre-requisites'
+        sh 'helm version && kubectl version --client=true && aws --version'
+
+        script {
+          env.AWS_ACCESS_KEY_ID = env.AWS_CREDENTIALS_USR
+          env.AWS_SECRET_ACCESS_KEY = env.AWS_CREDENTIALS_PSW
+          env.AWS_DEFAULT_REGION = env.DEPLOY_AWS_REGION
+          env.DOCKER_USERNAME = env.DOCKER_CREDENTIALS_USR ?: ''
+          env.DOCKER_PASSWORD = env.DOCKER_CREDENTIALS_PSW ?: ''
+          env.EKS_TAGS = env.EKS_CREDENTIAL ?: ''
+          env.GRAFANA_PASS = env.GRAFANA_CREDENTIAL ?: ''
+        }
+
+        echo "${AWS_DEFAULT_REGION}"
+
+        sh 'chmod u+x setup-aws.sh'
+        sh 'chmod u+x push.sh'
+        sh 'chmod u+x deploy.sh'
+
+        sh """#!/bin/bash
+          . ./setup-aws.sh -m ${deployMode} -n ${deployNamespace} &&
+          ./push.sh -m ${deployMode} &&
+          ./deploy.sh -m ${deployMode} -n ${deployNamespace} -f
+        """
+
+        script {
+          if (env.DEPLOY_MONITORING == 'true') {
+            sh 'chmod u+x install-monitoring.sh'
+            sh './install-monitoring.sh'
+          }
+        }
+      }
+    }
+  }
+
+  post {
+    always {
+      step([$class: 'JUnitResultArchiver', testResults: 'results/mocha/test-results.xml'])
+
+      // Fixes issue with source code not being available in Cobertura
+      sh 'mkdir ./src'
+      sh 'cp -r ./backend/src/* ./src'
+
+      // https://plugins.jenkins.io/cobertura/
+      cobertura coberturaReportFile: 'coverage/cobertura-coverage.xml'
+{%- endraw %}
+
+      {% if ctx.templates['Jenkins_trivy-scan'] -%}
+      {% raw -%}
+      // Publish Trivy reports
+      script {
+        def htmlFiles
+        dir ('vulnreports') {
+          htmlFiles = findFiles glob: '*.html'
+        }
+
+        publishHTML (
+          target: [allowMissing: false,
+          alwaysLinkToLastBuild: true,
+          keepAll: true,
+          reportDir: 'vulnreports',
+          reportFiles: htmlFiles.join(','),
+          reportName: 'Vulnerability scan report']
+        )
+      }
+      {%- endraw %}
+      {%- endif %}
+
+      {% raw -%}
+      sh """\
+        docker-compose --project-directory . \
+        -p ${env.PROJECT_NAME} \
+        -f docker-compose.yml \
+        -f compose/db.yml \
+        -f compose/db-test.yml \
+        -f compose/lint.yml \
+        -f compose/production.yml \
+        -f compose/robot.yml \
+        -f compose/test.yml \
+        down -v --remove-orphans"""
+
+      script {
+        def userrepo= sh (
+          script: "echo ${scm.getUserRemoteConfigs()[0].getUrl()}|sed -e 's#.*github.com/\\(.*\\).git.*#\\1#'",
+          returnStdout:true
+        ).trim()
+
+        env.ghuser = sh (
+          script: "echo ${userrepo}|cut -f 1 -d /",
+          returnStdout:true
+        ).trim()
+
+        env.ghrepo = sh (
+          script: "echo ${userrepo}|cut -f 2 -d /",
+          returnStdout:true
+        ).trim()
+
+        echo "user is ${env.ghuser} and repo is ${env.ghrepo}"
+
+        withCredentials([
+          usernamePassword(
+            credentialsId: 'SproutJenkinsGitHubApp',
+            usernameVariable: 'GITHUB_APP',
+            passwordVariable: 'GITHUB_ACCESS_TOKEN'
+          ),
+          string(
+            credentialsId: "${ghrepo}_webhook_url",
+            variable: 'SPROUT_WEBHOOK_URL'
+          )
+        ]) {
+          def hookjsonresp = sh (
+            script: '''curl -H "Content-Type: application/json" -H "Accept: application/vnd.github.v3+json" -H "Authorization: Bearer $GITHUB_ACCESS_TOKEN" https://api.github.com/repos/$ghuser/$ghrepo/hooks''',
+            returnStdout: true
+          )
+          def list = new JsonSlurper().parseText(hookjsonresp)
+
+          if( !list.findAll{hook -> hook.config.url==SPROUT_WEBHOOK_URL} ) {
+            echo 'Creating webhook.'
+            sh '''curl -H "Accept: application/vnd.github.v3+json" -H "Authorization: Bearer $GITHUB_ACCESS_TOKEN" -X POST -d \'{"name":"web","active":true,"events":["push","pull_request"],"config":{"url":\"'$SPROUT_WEBHOOK_URL'\","content_type":"json","insecure_ssl":"0"}}\' https://api.github.com/repos/$ghuser/$ghrepo/hooks'''
+          }
+        }
+      }
+    }
+    success {
+      notifyBuild('Completed successfully', '#138347')
+    }
+    unstable {
+      notifyBuild('Is unstable', '#F9BA00')
+    }
+    failure {
+      notifyBuild("Failed at stage: ${LAST_STAGE}", '#D9534F')
+    }
+    changed {
+      notifyBuild('Pipeline has been changed', '#148AB3')
+    }
+  }
+}
+
+def setLatestStage() {
+  LAST_STAGE=env.STAGE_NAME
+}
+
+def notifyBuild(String status, String colorCode = '#D4DADF') {
+  def slackChannel = env.SLACK_CHANNEL
+  if (slackChannel?.trim()) {
+    // Requires the Slack plugin (https://plugins.jenkins.io/slack/)
+    slackSend(channel: slackChannel, color: colorCode, message: "Job: ${env.JOB_NAME} #${env.BUILD_NUMBER} - ${env.BUILD_URL}\n${status}")
+  }
+}
+{%- endraw %}

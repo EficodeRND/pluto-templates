@@ -1,0 +1,44 @@
+{{- if .Values.global.ingress.enabled -}}
+{{- $fullName := include "backend.fullname" . -}}
+{{- $host := .Values.global.host -}}
+{{- $svcPort := .Values.service.port -}}
+{{- if semverCompare ">=1.14-0" .Capabilities.KubeVersion.GitVersion -}}
+apiVersion: networking.k8s.io/v1
+{{- else -}}
+apiVersion: extensions/v1
+{{- end }}
+kind: Ingress
+metadata:
+  name: {{ $fullName }}
+  labels:
+    {{- include "backend.labels" . | nindent 4 }}
+  {{- with .Values.global.ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+{{- if .Values.global.ingress.tls }}
+  tls:
+  {{- range .Values.global.ingress.tls }}
+    - hosts:
+      - {{ $host | quote }}
+      secretName: {{ .secretName }}
+  {{- end }}
+{{- end }}
+  ingressClassName: nginx
+  rules:
+  {{- range .Values.global.ingress.backend.hosts }}
+    - {{ if $host }}host: {{ $host | quote }}{{ end }}
+      http:
+        paths:
+          {{- range .paths }}
+            - path: {{ . }}
+              pathType: Prefix
+              backend:
+                service:
+                  name: {{ $fullName }}
+                  port:
+                    number: {{ $svcPort }}
+          {{- end }}
+  {{- end }}
+{{- end }}

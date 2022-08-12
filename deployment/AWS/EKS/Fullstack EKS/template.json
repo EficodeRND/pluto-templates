@@ -1,0 +1,320 @@
+{
+    "name": "AWS EKS",
+    "description": "Deploy your application stack to AWS EKS and store the artifacts in ECR or a custom Docker registry.",
+    "documentation": [
+        "deployment/AWS/EKS/Fullstack EKS/template/docs/deploy_requirements.md",
+        "deployment/AWS/EKS/Fullstack EKS/template/README_deploy.md"
+    ],
+    "inputs": [
+        {
+            "name": "Docker registry type",
+            "description": "Whether to use ECR or a custom Docker registry for storing the Docker images",
+            "type": "list",
+            "target": "template",
+            "field": "DEPLOY_DOCKER_REGISTRY_TYPE",
+            "options": [
+                {
+                    "text": "Use ECR",
+                    "value": "ecr"
+                },
+                {
+                    "text": "Use a custom docker registry, such as Artifactory",
+                    "value": "custom"
+                }
+            ]
+        },
+        {
+            "name": "Docker registry",
+            "description": "Docker registry where the Docker images will be pushed, without the protocol in the beginning. For example: artifactory.example.io/sprout-project Only matters when using a custom Docker registry.",
+            "type": "text",
+            "target": "template",
+            "optional": true,
+            "field": "DEPLOY_DOCKER_REGISTRY"
+        },
+        {
+            "name": "Docker username",
+            "description": "Docker username for logging in to the registry where the images will be pushed. Only matters when using a custom Docker registry.",
+            "type": "text",
+            "target": "template",
+            "optional": true,
+            "field": "DOCKER_USERNAME"
+        },
+        {
+            "name": "Docker password",
+            "description": "Docker password for logging in to the registry where the images will be pushed. Only matters when using a custom Docker registry.",
+            "type": "password",
+            "target": "ci-secrets",
+            "optional": true,
+            "field": "DOCKER_PASSWORD"
+        },
+        {
+            "name": "Docker email",
+            "description": "Docker email for logging in to the registry where the images will be pushed. Only matters when using a custom Docker registry.",
+            "target": "ci-secrets",
+            "type": "text",
+            "optional": true,
+            "field": "DOCKER_EMAIL"
+        },
+        {
+            "name": "AWS region",
+            "description": "AWS region for deployment",
+            "type": "list",
+            "target": "template",
+            "field": "DEPLOY_AWS_REGION",
+            "options": [
+                {
+                    "text": "US East (N. Virginia)",
+                    "value": "us-east-1"
+                },
+                {
+                    "text": "US East (Ohio)",
+                    "value": "us-east-2"
+                },
+                {
+                    "text": "US West (N. California)",
+                    "value": "us-west-1"
+                },
+                {
+                    "text": "US West (Oregon)",
+                    "value": "us-west-2"
+                },
+                {
+                    "text": "Africa (Cape Town)",
+                    "value": "af-south-1"
+                },
+                {
+                    "text": "Asia Pacific (Hong Kong)",
+                    "value": "ap-east-1"
+                },
+                {
+                    "text": "Asia Pacific (Jakarta)",
+                    "value": "ap-southeast-3"
+                },
+                {
+                    "text": "Asia Pacific (Mumbai)",
+                    "value": "ap-south-1"
+                },
+                {
+                    "text": "Asia pacific (Osaka)",
+                    "value": "ap-northeast-3"
+                },
+                {
+                    "text": "Asia Pacific (Seoul)",
+                    "value": "ap-northeast-2"
+                },
+                {
+                    "text": "Asia pacific (Singapore)",
+                    "value": "ap-southeast-1"
+                },
+                {
+                    "text": "Asia pacific (Sydney)",
+                    "value": "ap-southeast-2"
+                },
+                {
+                    "text": "Asia pacific (Tokyo)",
+                    "value": "ap-northeast-1"
+                },
+                {
+                    "text": "Canada (Central)",
+                    "value": "ca-central-1"
+                },
+                {
+                    "text": "Europe (Frankfurt)",
+                    "value": "eu-central-1"
+                },
+                {
+                    "text": "Europe (Ireland)",
+                    "value": "eu-west-1"
+                },
+                {
+                    "text": "Europe (London)",
+                    "value": "eu-west-2"
+                },
+                {
+                    "text": "Europe (Milan)",
+                    "value": "eu-south-1"
+                },
+                {
+                    "text": "Europe (Paris)",
+                    "value": "eu-west-3"
+                },
+                {
+                    "text": "Europe (Stockholm)",
+                    "value": "eu-north-1"
+                },
+                {
+                    "text": "Middle East (Bahrain)",
+                    "value": "me-south-1"
+                },
+                {
+                    "text": "South America (São Paulo)",
+                    "value": "sa-east-1"
+                },
+                {
+                    "text": "Canada (Central)",
+                    "value": "ca-central-1"
+                },
+                {
+                    "text": "Canada (Central)",
+                    "value": "ca-central-1"
+                },
+                {
+                    "text": "Canada (Central)",
+                    "value": "ca-central-1"
+                },
+                {
+                    "text": "South America (São Paulo)",
+                    "value": "sa-east-1"
+                }
+            ]
+        },
+        {
+            "name": "Nodegroup name",
+            "description": "Nodegroup name for AWS deployment",
+            "type": "text",
+            "target": "template",
+            "optional": true,
+            "field": "NODEGROUP_NAME"
+        },
+        {
+            "name": "Cluster node type",
+            "description": "The node type to use in the AWS EKS cluster. At least t3.medium is needed if more than 1 namespace will be used or Grafana will be deployed.",
+            "type": "list",
+            "target": "template",
+            "field": "CLUSTER_NODE_TYPE",
+            "options": [
+                {
+                    "text": "t3.small",
+                    "value": "t3.small"
+                },
+                {
+                    "text": "t3.medium (recommended)",
+                    "value": "t3.medium"
+                },
+                {
+                    "text": "t3.large",
+                    "value": "t3.large"
+                },
+                {
+                    "text": "t3.xlarge",
+                    "value": "t3.xlarge"
+                },
+                {
+                    "text": "t3.2xlarge",
+                    "value": "t3.2xlarge"
+                }
+            ]
+        },
+        {
+            "name": "Tags for the AWS EKS cluster",
+            "description": "Additional tags for creating the EKS cluster. Format: Key=string,Contact=john.doe@eficode.com,Department=example-hki",
+            "type": "text",
+            "target": "ci-secrets",
+            "optional": true,
+            "field": "EKS_TAGS"
+        },
+        {
+            "name": "AWS Access Key ID",
+            "description": "Access key ID used to sign programmatic requests to AWS",
+            "type": "text",
+            "target": "ci-secrets",
+            "field": "DEPLOY_AWS_ID"
+        },
+        {
+            "name": "AWS secret access key",
+            "description": "Secret access key used to sign programmatic requests to AWS.",
+            "type": "password",
+            "target": "ci-secrets",
+            "field": "DEPLOY_AWS_SECRET"
+        },
+        {
+            "name": "Public deploy address",
+            "description": "Public address for deployment. For example: example.zdd.eficode.com",
+            "type": "text",
+            "target": "template",
+            "field": "DEPLOY_PUBLIC_ADDRESS"
+        },
+        {
+            "name": "Deploy monitoring stack",
+            "description": "Choose if the logging and monitoring stack should be automatically deployed (Grafana + Grafana Loki + Prometheus). The Grafana password must be set if this is chosen.",
+            "type": "checkbox",
+            "target": "template",
+            "optional": true,
+            "field": "DEPLOY_MONITORING"
+        },
+        {
+            "name": "Enable access from outside the cluster to Grafana",
+            "description": "Choose if Grafana should be exposed to the internet on the url grafana-DEPLOY_PUBLIC_ADDRESS. If not enabled, it can be accessed via port forwarding as shown in the documentation.",
+            "type": "checkbox",
+            "target": "template",
+            "optional": true,
+            "field": "DEPLOY_MONITORING_INGRESS"
+        },
+        {
+            "name": "Grafana password",
+            "description": "Strong password to be used for authenticating to the Grafana frontend available at grafana-[PUBLIC ADDRESS]. The default username is admin. Required if using Grafana.",
+            "type": "password",
+            "target": "ci-secrets",
+            "field": "GRAFANA_PASS",
+            "optional": true
+        },
+        {
+            "name": "Google OAuth ID",
+            "description": "OAuth ID for the Google login",
+            "type": "text",
+            "target": "ci-secrets",
+            "field": "GOOGLE_OAUTH_ID",
+            "optional": true
+        },
+        {
+            "name": "Google OAuth secret",
+            "description": "OAuth secret for the Google login",
+            "type": "password",
+            "target": "ci-secrets",
+            "field": "GOOGLE_OAUTH_SECRET",
+            "optional": true
+        },
+        {
+            "name": "Facebook app ID",
+            "description": "App ID for the Facebook login",
+            "type": "text",
+            "target": "ci-secrets",
+            "field": "FACEBOOK_APP_ID",
+            "optional": true
+        },
+        {
+            "name": "Facebook app secret",
+            "description": "OAuth secret for the Facebook login",
+            "type": "password",
+            "target": "ci-secrets",
+            "field": "FACEBOOK_APP_SECRET",
+            "optional": true
+        },
+        {
+            "name": "Nodemailer SMTP host",
+            "description": "SMTP host for Nodemailer",
+            "type": "text",
+            "target": "ci-secrets",
+            "field": "NODEMAILER_SMTP_HOST",
+            "optional": true
+        },
+        {
+            "name": "Nodemailer username",
+            "description": "Username for Nodemailer",
+            "type": "text",
+            "target": "ci-secrets",
+            "field": "NODEMAILER_USER",
+            "optional": true
+        },
+        {
+            "name": "Nodemailer password",
+            "description": "Password for Nodemailer",
+            "type": "password",
+            "target": "ci-secrets",
+            "field": "NODEMAILER_PASS",
+            "optional": true
+        }
+    ],
+    "postActions": {}
+}
+
