@@ -73,6 +73,7 @@ const AuthPage = (props) => {
                   loginWithGoogle(null, false);
                 }}
                 locale={locale}
+                width="320px"
               />
               <Button
                 fluid
