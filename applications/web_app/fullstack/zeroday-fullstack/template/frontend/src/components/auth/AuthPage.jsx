@@ -122,6 +122,7 @@ AuthPage.defaultProps = {
   loginWithGoogle: () => {},
   loginWithFacebook: () => {},
   authError: '',
+  locale: 'en',
 };
 
 export default AuthPage;

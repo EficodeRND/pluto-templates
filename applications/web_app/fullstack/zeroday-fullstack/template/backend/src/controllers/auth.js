@@ -334,15 +334,14 @@ exports.googleSignIn = async (ctx) => {
     let ticket;
     try {
       ticket = await client.verifyIdToken({
-        idToken: ctx.request.body.access_token
+        idToken: ctx.request.body.access_token,
       });
-    } catch(e) {
+    } catch (e) {
       ctx.throw(401, 'Token validation failed.');
     }
 
     const payload = ticket.getPayload();
-    const userid = payload.sub;
-    const email = payload.email;
+    const { sub: userid, email } = payload;
 
     let user = await database.User.findOne({
       where: {

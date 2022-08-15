@@ -40,7 +40,7 @@ export const loginWithFacebook = () => async (dispatch, getState, api) => {
 };
 
 export const loginWithGoogle = (credential, success = true) => async (dispatch, getState, api) => {
-  if(!success) {
+  if (!success) {
     dispatch(signupFailure('Login failed'));
     return;
   }
