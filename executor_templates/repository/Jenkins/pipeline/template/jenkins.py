@@ -206,9 +206,9 @@ if resp.status_code == 200:
     print("Google Credential creation HTTP response code: " + str(google_cred_resp.status_code))
 
     nodemailer_host_cred_resp = requests.post(cred_creation_url, headers=headers, data=nodemailer_host_creds_result)
-    print("Google Credential creation HTTP response code: " + str(nodemailer_host_cred_resp.status_code))
+    print("Nodemailer Host Credential creation HTTP response code: " + str(nodemailer_host_cred_resp.status_code))
 
     nodemailer_cred_resp = requests.post(cred_creation_url, headers=headers, data=nodemailer_creds_result)
-    print("Google Credential creation HTTP response code: " + str(nodemailer_cred_resp.status_code))
+    print("Nodemailer Credential creation HTTP response code: " + str(nodemailer_cred_resp.status_code))
 else:
     print("There was a problem creating the Jenkins pipeline. Does it exist for this repository already? Check provided information & try again.")
