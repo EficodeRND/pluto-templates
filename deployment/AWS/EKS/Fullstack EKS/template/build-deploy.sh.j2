@@ -1,7 +1,7 @@
 {% raw -%}
 #!/bin/bash
 
-test -z "$PROJECT_NAME" && test -f .env.development && \
+test -z "$PROJECT_NAME" && test -f .env.deploy && \
   PROJECT_NAME=$(grep -e '^DEPLOY_PROJECT_NAME=.*' .env.deploy | cut -d '=' -f2)
 
 dockerPrefix="${PROJECT_NAME}"
