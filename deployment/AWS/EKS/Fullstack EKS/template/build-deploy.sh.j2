@@ -1,3 +1,4 @@
+{% raw -%}
 #!/bin/bash
 
 test -z "$PROJECT_NAME" && test -f .env.development && \
@@ -31,6 +32,10 @@ EOF
 
 buildDevImages() {
   set -x
+{%- endraw %}
+
+  {% if ctx.templates['fullstack_zeroday-fullstack'] -%}
+  {% raw -%}
   docker-compose \
   --verbose \
   -f docker-compose.yml \
@@ -40,11 +45,31 @@ buildDevImages() {
 
   docker tag ${dockerPrefix}_frontend-dev ${dockerPrefix}_frontend-dev:${version}
   docker tag ${dockerPrefix}_backend-dev ${dockerPrefix}_backend-dev:${version}
+  {%- endraw %}
+  {% else %}
+  {% raw -%}
+  docker-compose \
+  --verbose \
+  -f docker-compose.yml \
+  --project-directory . \
+  -p ${dockerPrefix} \
+  build frontend_react_with_rest rest_python
+
+  docker tag ${dockerPrefix}_frontend_react_with_rest ${dockerPrefix}_frontend-dev:${version}
+  docker tag ${dockerPrefix}_rest_python ${dockerPrefix}_backend-dev:${version}
+  {%- endraw %}
+  {% endif %}
+
+{% raw -%}
   set +x
 }
 
 buildProdImages() {
   set -x  
+{%- endraw %}
+
+  {% if ctx.templates['fullstack_zeroday-fullstack'] -%}
+  {% raw -%}
   docker-compose \
     -f compose/production.yml \
     -f compose/db.yml \
@@ -61,6 +86,22 @@ buildProdImages() {
 
   docker tag ${dockerPrefix}_frontend ${dockerPrefix}_frontend-prod:${version}
   docker tag ${dockerPrefix}_backend ${dockerPrefix}_backend-prod:${version}
+  {%- endraw %}
+  {% else %}
+  {% raw -%}
+  docker-compose \
+  --verbose \
+  -f docker-compose.yml \
+  --project-directory . \
+  -p ${dockerPrefix} \
+  build frontend_react_with_rest rest_python
+
+  docker tag ${dockerPrefix}_frontend_react_with_rest ${dockerPrefix}_frontend-prod:${version}
+  docker tag ${dockerPrefix}_rest_python ${dockerPrefix}_backend-prod:${version}
+  {%- endraw %}
+  {% endif %}
+
+{% raw -%}
   set +x
 }
 ### Functions end
@@ -105,3 +146,4 @@ else
 fi
 
 echo "Done, exiting."
+{%- endraw %}
