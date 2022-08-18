@@ -5,6 +5,7 @@ import {
 } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import { propTypes } from 'redux-form';
+import { GoogleLogin } from '@react-oauth/google';
 
 import ErrorMessage from './ErrorMessage';
 import AuthButtonGroup from './AuthButtonGroup';
@@ -28,6 +29,7 @@ const AuthPage = (props) => {
     loginWithGoogle,
     loginWithFacebook,
     authError,
+    locale,
   } = props;
   return (
     <div className="login">
@@ -59,20 +61,20 @@ const AuthPage = (props) => {
             <Translatable capitalize translationKey="lost_password" />
           </Link>
         )}
-        {!resetPasswordPage
+        {!resetPasswordPage && !requestPasswordChangePage
           && (
             <div>
               <Divider />
-              <Button
-                fluid
-                basic
-                color="black"
-                className="oauth-login-btn"
-                onClick={() => loginWithGoogle()}
-              >
-                <img alt="" className="google-login-icon" src="/images/google.svg" />
-                <Translatable capitalize translationKey="google_login" />
-              </Button>
+              <GoogleLogin
+                onSuccess={(credentialResponse) => {
+                  loginWithGoogle(credentialResponse.credential);
+                }}
+                onError={() => {
+                  loginWithGoogle(null, false);
+                }}
+                locale={locale}
+                width="320px"
+              />
               <Button
                 fluid
                 color="facebook"
@@ -106,6 +108,7 @@ AuthPage.propTypes = {
   loginWithGoogle: PropTypes.func,
   loginWithFacebook: PropTypes.func,
   authError: PropTypes.string,
+  locale: PropTypes.string,
   ...propTypes,
 };
 
@@ -119,6 +122,7 @@ AuthPage.defaultProps = {
   loginWithGoogle: () => {},
   loginWithFacebook: () => {},
   authError: '',
+  locale: 'en',
 };
 
 export default AuthPage;

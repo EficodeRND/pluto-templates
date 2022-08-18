@@ -177,6 +177,9 @@ pipeline {
         DOCKER_CREDENTIALS = credentials("${env.PROJECT_NAME}_docker_credentials")
         EKS_CREDENTIAL = credentials("${env.PROJECT_NAME}_eks_credential")
         GRAFANA_CREDENTIAL = credentials("${env.PROJECT_NAME}_grafana_credential")
+        GOOGLE_CREDENTIALS = credentials("${env.PROJECT_NAME}_google_credentials")
+        NODEMAILER_HOST_CREDENTIAL = credentials("${env.PROJECT_NAME}_nodemailer_host_credential")
+        NODEMAILER_CREDENTIALS = credentials("${env.PROJECT_NAME}_nodemailer_credentials")
       }
 
       steps {
@@ -193,6 +196,11 @@ pipeline {
           env.DOCKER_PASSWORD = env.DOCKER_CREDENTIALS_PSW ?: ''
           env.EKS_TAGS = env.EKS_CREDENTIAL ?: ''
           env.GRAFANA_PASS = env.GRAFANA_CREDENTIAL ?: ''
+          env.GOOGLE_OAUTH_ID = env.GOOGLE_CREDENTIALS_USR ?: ''
+          env.GOOGLE_OAUTH_SECRET = env.GOOGLE_CREDENTIALS_PSW ?: ''
+          env.NODEMAILER_SMTP_HOST = env.NODEMAILER_HOST_CREDENTIAL ?: ''
+          env.NODEMAILER_USER = env.NODEMAILER_CREDENTIALS_USR ?: ''
+          env.NODEMAILER_PASS = env.NODEMAILER_CREDENTIALS_PSW ?: ''
         }
 
         echo "${AWS_DEFAULT_REGION}"

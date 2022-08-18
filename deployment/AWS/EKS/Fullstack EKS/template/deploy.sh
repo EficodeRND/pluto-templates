@@ -96,20 +96,20 @@ helmInstallApp() {
 
   set +x
 
-  if [[ -n "$FACEBOOK_APP_SECRET" ]]
+  if [[ -n "$FACEBOOK_APP_SECRET" ]] || [[ -n "$GOOGLE_OAUTH_SECRET" ]]
   then
     kubectl create secret generic oauth-secret \
-    --namespace=$DEPLOY_NAMESPACE \
+    --namespace=${namespace} \
     --from-literal=FACEBOOK_APP_SECRET=$FACEBOOK_APP_SECRET \
     --from-literal=GOOGLE_OAUTH_SECRET=$GOOGLE_OAUTH_SECRET \
     --dry-run=client \
     -o yaml | kubectl apply -f -
   fi
 
-  if [[ -n "$FACEBOOK_APP_ID" ]]
+  if [[ -n "$FACEBOOK_APP_ID" ]] || [[ -n "$GOOGLE_OAUTH_ID" ]]
   then
     kubectl create secret generic oauth-id-secret \
-    --namespace=$DEPLOY_NAMESPACE \
+    --namespace=${namespace} \
     --from-literal=FACEBOOK_APP_ID=$FACEBOOK_APP_ID \
     --from-literal=GOOGLE_OAUTH_ID=$GOOGLE_OAUTH_ID \
     --dry-run=client \
@@ -119,7 +119,7 @@ helmInstallApp() {
   if [[ -n "$NODEMAILER_USER" ]]
   then
     kubectl create secret generic nodemailer-secret \
-    --namespace=$DEPLOY_NAMESPACE \
+    --namespace=${namespace} \
     --from-literal=NODEMAILER_SMTP_HOST=$NODEMAILER_SMTP_HOST \
     --from-literal=NODEMAILER_USER=$NODEMAILER_USER \
     --from-literal=NODEMAILER_PASS=$NODEMAILER_PASS \

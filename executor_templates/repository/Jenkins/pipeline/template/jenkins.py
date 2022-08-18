@@ -23,7 +23,24 @@ else:
 
 args=sys.argv
 if len(args) > 1:
-    [_, GITHUB_REPO_URL, JENKINS_SERVER_URL, JENKINS_FOLDER_NAME, JENKINS_USERNAME, JENKINS_API_KEY, DEPLOY_AWS_ID, DEPLOY_AWS_SECRET, DOCKER_USERNAME, DOCKER_PASSWORD, EKS_TAGS, GRAFANA_PASS] = args
+    [
+        _,
+        GITHUB_REPO_URL,
+        JENKINS_SERVER_URL,
+        JENKINS_FOLDER_NAME,
+        JENKINS_USERNAME,
+        JENKINS_API_KEY,
+        DEPLOY_AWS_ID,
+        DEPLOY_AWS_SECRET,
+        DOCKER_USERNAME,
+        DOCKER_PASSWORD,
+        EKS_TAGS,
+        GRAFANA_PASS,
+        GOOGLE_OAUTH_ID,
+        GOOGLE_OAUTH_SECRET,
+        NODEMAILER_SMTP_HOST,
+        NODEMAILER_USER, NODEMAILER_PASS
+    ] = args
 else:
     GITHUB_REPO_URL = os.environ.get("SPROUT_REPO_URL")
     JENKINS_SERVER_URL = os.environ.get("JENKINS_SERVER_URL")
@@ -36,6 +53,11 @@ else:
     DOCKER_PASSWORD = os.environ.get("DOCKER_PASSWORD", "")
     EKS_TAGS = os.environ.get("EKS_TAGS", "")
     GRAFANA_PASS = os.environ.get("GRAFANA_PASS", "")
+    GOOGLE_OAUTH_ID = os.environ.get("GOOGLE_OAUTH_ID", "")
+    GOOGLE_OAUTH_SECRET = os.environ.get("GOOGLE_OAUTH_SECRET", "")
+    NODEMAILER_SMTP_HOST = os.environ.get("NODEMAILER_SMTP_HOST", "")
+    NODEMAILER_USER = os.environ.get("NODEMAILER_USER", "")
+    NODEMAILER_PASS = os.environ.get("NODEMAILER_PASS", "")
 
 print(f"{GITHUB_REPO_URL=} {JENKINS_SERVER_URL=} {JENKINS_FOLDER_NAME=} {JENKINS_USERNAME=}")
 print("RUNNING....")
@@ -124,12 +146,35 @@ eks_ctx =  SimpleTemplateContext({
 eks_renderer = TemplateRenderer(template_context=eks_ctx)
 eks_creds_result, values, error = eks_renderer.render(secret_text_template)
 
-grafana_ctx =  SimpleTemplateContext({
+grafana_ctx = SimpleTemplateContext({
     "ct_id": parsed.name + "_grafana_credential",
     "ct_secret": GRAFANA_PASS
 })
 grafana_renderer = TemplateRenderer(template_context=grafana_ctx)
 grafana_creds_result, values, error = grafana_renderer.render(secret_text_template)
+
+google_ctx = SimpleTemplateContext({
+    "ct_id": parsed.name + "_google_credentials",
+    "ct_username": GOOGLE_OAUTH_ID,
+    "ct_password": GOOGLE_OAUTH_SECRET
+})
+google_renderer = TemplateRenderer(template_context=google_ctx)
+google_creds_result, values, error = google_renderer.render(usr_psw_template)
+
+nodemailer_host_ctx = SimpleTemplateContext({
+    "ct_id": parsed.name + "_nodemailer_host_credential",
+    "ct_secret": NODEMAILER_SMTP_HOST
+})
+nodemailer_host_renderer = TemplateRenderer(template_context=nodemailer_host_ctx)
+nodemailer_host_creds_result, values, error = nodemailer_host_renderer.render(secret_text_template)
+
+nodemailer_ctx = SimpleTemplateContext({
+    "ct_id": parsed.name + "_nodemailer_credentials",
+    "ct_username": NODEMAILER_USER,
+    "ct_password": NODEMAILER_PASS
+})
+nodemailer_renderer = TemplateRenderer(template_context=nodemailer_ctx)
+nodemailer_creds_result, values, error = nodemailer_renderer.render(usr_psw_template)
 
 # post xml files to jenkins
 headers["Content-Type"] = "application/xml"
@@ -156,5 +201,14 @@ if resp.status_code == 200:
 
     grafana_cred_resp = requests.post(cred_creation_url, headers=headers, data=grafana_creds_result)
     print("Grafana Credential creation HTTP response code: " + str(grafana_cred_resp.status_code))
+
+    google_cred_resp = requests.post(cred_creation_url, headers=headers, data=google_creds_result)
+    print("Google Credential creation HTTP response code: " + str(google_cred_resp.status_code))
+
+    nodemailer_host_cred_resp = requests.post(cred_creation_url, headers=headers, data=nodemailer_host_creds_result)
+    print("Nodemailer Host Credential creation HTTP response code: " + str(nodemailer_host_cred_resp.status_code))
+
+    nodemailer_cred_resp = requests.post(cred_creation_url, headers=headers, data=nodemailer_creds_result)
+    print("Nodemailer Credential creation HTTP response code: " + str(nodemailer_cred_resp.status_code))
 else:
     print("There was a problem creating the Jenkins pipeline. Does it exist for this repository already? Check provided information & try again.")
