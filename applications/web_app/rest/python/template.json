@@ -7,7 +7,7 @@
   "appType": "backend",
   "requires": [
     {
-      "url": "https://github.com/EficodeEntDemo/python-rest-api-template.git",
+      "url": "https://github.com/jpvg10/python-rest-api-template.git",
       "paths": [
         "/"
       ]
@@ -19,11 +19,8 @@
       "build": {
         "context": ""
       },
-      "environment": {
-        "PORT": 8080
-      },
       "ports": [
-        "8080:8080"
+        "9000:9000"
       ]
     }
   }
