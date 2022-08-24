@@ -114,8 +114,6 @@ then
       exit 1
 fi
 
-echo $certificateArn
-
 sed "s#%CERTNAME%#$certificateArn#g" ./helm/ingress-nginx/09-controller-service.yaml.template > ./helm/ingress-nginx/09-controller-service.yaml
 
 if [ "$DEPLOY_DOCKER_REGISTRY_TYPE" == 'ecr' ]
