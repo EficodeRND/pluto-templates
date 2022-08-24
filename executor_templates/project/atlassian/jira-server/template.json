@@ -1,0 +1,94 @@
+{
+  "name": "Create Jira project",
+  "description": "Create a Jira project",
+    "documentation": [
+    "projects/atlassian/jira/template/README.md"
+  ],
+  "appType": "executable",
+  "requires": [
+    {
+      "url": "https://github.com/EficodeEntDemo/atlassian_templates.git",
+      "paths": ["/"]
+    }
+  ],
+  "inputs": [
+    {
+      "name": "Jira Url",
+      "description": "URL to the Jira server",
+      "target": "executor",
+      "type": "text",
+      "field": "JIRA_URL"
+    },
+    {
+      "name": "Project key",
+      "description": "Project key for the new Jira project",
+      "target": "executor",
+      "type": "text",
+      "field": "PROJECT_KEY"
+    },
+    {
+      "name": "Project name",
+      "description": "Jira project name",
+      "target": "executor",
+      "type": "text",
+      "field": "PROJECT_NAME"
+    },
+    {
+      "name": "Project lead",
+      "description": "Jira user name of the project lead",
+      "target": "executor",
+      "type": "text",
+      "field": "PROJECT_LEAD"
+    },
+    {
+      "name": "Jira project type",
+      "description": "Project type to be created",
+      "target": "executor",
+      "type": "list",
+      "field": "JIRA_PROJECT_TYPE",
+      "options": [
+        {
+          "text": "Jira business project",
+          "value": "JIRA_BUSINESS_PROJECT"
+        },
+        {
+          "text": "Default project",
+          "value": "JIRA_DEFAULT_PROJECT"
+        }
+      ]
+    },
+    {
+      "name": "Template project id",
+      "description": "Jira project id to use as a template",
+      "target": "executor",
+      "type": "number",
+      "field": "TEMPLATE_PROJECT_ID"
+    },
+    {
+      "name": "Template board ids",
+      "description": "Comma separated list if the Jira board ids to use as a template for the created boards",
+      "target": "executor",
+      "type": "text",
+      "field": "TEMPLATE_BOARD_IDS"
+    },
+    {
+      "name": "Jira user name",
+      "description": "Jira user name for creating the project",
+      "target": "executor",
+      "type": "text",
+      "field": "JIRA_USERNAME"
+    },
+    {
+      "name": "Jira token",
+      "description": "The personal access token (PAT) for authenticating in Jira",
+      "target": "executor",
+      "type": "text",
+      "field": "JIRA_TOKEN"
+    }
+  ],
+  "executable": "create_jira_project_from_template.py",
+  "postActions": {
+    "all": [],
+    "GitHub": []
+  }
+}

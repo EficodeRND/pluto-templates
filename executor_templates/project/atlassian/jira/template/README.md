@@ -1,1 +1,0 @@
-# Jira project creation template
