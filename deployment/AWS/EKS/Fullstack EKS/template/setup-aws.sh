@@ -111,7 +111,7 @@ certificateArn=$(aws acm list-certificates --query CertificateSummaryList[].[Cer
 if [ -z "$certificateArn" ]
 then
       echo "Could not find certificateArn . Check that you have a certificate in ACM for the public deployment address. "
-      exit(1)
+      exit 1
 fi
 
 echo $certificateArn
