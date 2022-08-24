@@ -82,7 +82,7 @@
       "name": "Jira token",
       "description": "The personal access token (PAT) for authenticating in Jira",
       "target": "executor",
-      "type": "text",
+      "type": "password",
       "field": "JIRA_TOKEN"
     }
   ],
