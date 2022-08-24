@@ -65,7 +65,8 @@
                 "route53:*",
                 "sts:GetCallerIdentity",
                 "ecr:GetRepositoryPolicy",
-                "ecr:PutReplicationConfiguration"
+                "ecr:PutReplicationConfiguration",
+                "acm:ListCertificates"
             ],
             "Resource": "*"
         },
