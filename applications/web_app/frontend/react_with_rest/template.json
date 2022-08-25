@@ -14,14 +14,12 @@
       "build": {
         "context": "",
         "args": [
-          "BACKEND_API_URL=${BACKEND_API_URL}"
+          "BACKEND_API_URL=${BACKEND_API_URL}",
+          "DEPLOY_PUBLIC_ADDRESS=${DEPLOY_PUBLIC_ADDRESS}"
         ]
       },
-      "environment": {
-        "PORT": 80
-      },
       "ports": [
-        "80:80"
+        "80:8000"
       ]
     }
   }

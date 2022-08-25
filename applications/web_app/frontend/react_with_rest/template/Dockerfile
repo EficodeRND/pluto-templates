@@ -16,7 +16,9 @@ RUN yarn build
 FROM nginx:1.21.0-alpine as production
 
 ARG BACKEND_API_URL
-ENV BACKEND_API_URL=${BACKEND_API_URL}
+ARG DEPLOY_PUBLIC_ADDRESS
+ENV BACKEND_API_URL=${BACKEND_API_URL:-http://${DEPLOY_PUBLIC_ADDRESS}}
+ENV PORT=8000
 
 # Copy built assets from builder
 COPY --from=builder /app/build /usr/share/nginx/html
