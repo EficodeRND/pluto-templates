@@ -33,9 +33,8 @@ The Fullstack template is a fullstack project using Node and React. The template
 
 - **React + Redux Frontend**
 
-  - Webpack 4 + refactored common config
-  - React Router 4
-  - Less templating with production minify
+  - Webpack 5 + refactored common config
+  - React Router 5
   - Building minified nginx image for Docker
 
 - **Docker Compose**
@@ -49,8 +48,13 @@ The Fullstack template is a fullstack project using Node and React. The template
 
 - **Jenkins**
 
-  - Everything build and tested using Docker
-  - Slack Notifications
+  - Everything built and tested using Docker
+  - Trivy security scanning
+
+- **GitHub Actions**
+  - Everything built and tested using Docker
+  - Trivy security scanning
+  - Slack notifications
 
 ---
 
@@ -88,7 +92,8 @@ For production mode you need to use the production configuration file:
 
 ### Prepare database
 
-    Install postgresql: 
+Install postgresql:
+
     https://www.postgresql.org/download/
 
     psql -c "CREATE ROLE demo WITH CREATEDB LOGIN PASSWORD 'demo'"
@@ -101,19 +106,21 @@ Add this line to your .env:
 
 ### Backend
 
-    Run these commands in the /backend directory:
+Run these commands in the /backend directory:
+
+    npm install
+    npm start
+
+The backend will run on port `9000`
+
+### Frontend
+
+Run these commands in the /frontend directory:
 
     npm install
     npm start
 
 The frontend will run on port `8000`
-
-### Frontend
-
-    Run these commands in the /frontend directory:
-
-    npm install
-    npm start
 
 ---
 
@@ -125,8 +132,8 @@ To use editorconfig, [download plugin for your IDE](https://editorconfig.org/#do
 
 Run eslint in Docker container
 
-docker-compose run backend-dev sh -c "npm run lint"
-docker-compose run frontend-dev sh -c "npm run lint"
+    docker-compose run backend-dev sh -c "npm run lint"
+    docker-compose run frontend-dev sh -c "npm run lint"
 
 Run `npm run lint` in backend and frontend directories to check the linting locally.
 
@@ -158,6 +165,6 @@ Jenkins can be set up automatically with the executor script named "GitHub Jenki
 
 ## Teardown of resources after automatic or manual deployment
 
-The following list includes the resources, which are to be removed. Delete resources selectively if required.
+The following list includes the resources which are to be removed. Delete resources selectively if required.
 
 1. Delete Jenkins pipeline

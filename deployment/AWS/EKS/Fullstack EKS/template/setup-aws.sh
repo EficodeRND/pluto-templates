@@ -103,6 +103,19 @@ done
 
 set -x
 
+
+certificateDomain=$(echo $DEPLOY_PUBLIC_ADDRESS|cut -f2- -d.)
+
+certificateArn=$(aws acm list-certificates --query CertificateSummaryList[].[CertificateArn,DomainName]  --output text | grep $certificateDomain | cut -f1)
+
+if [ -z "$certificateArn" ]
+then
+      echo "Could not find certificateArn . Check that you have a certificate in ACM for the public deployment address. "
+      exit 1
+fi
+
+sed "s#%CERTNAME%#$certificateArn#g" ./helm/ingress-nginx/09-controller-service.yaml.template > ./helm/ingress-nginx/09-controller-service.yaml
+
 if [ "$DEPLOY_DOCKER_REGISTRY_TYPE" == 'ecr' ]
 then
     aws ecr describe-repositories --repository-name $DEPLOY_PROJECT_NAME/$DEPLOY_MODE/frontend >> /dev/null && \
