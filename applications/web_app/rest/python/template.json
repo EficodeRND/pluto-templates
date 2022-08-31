@@ -7,7 +7,7 @@
   "appType": "backend",
   "requires": [
     {
-      "url": "https://github.com/EficodeEntDemo/python-rest-api-template.git",
+      "url": "https://github.com/EficodeRND/python-rest-api-template.git",
       "paths": [
         "/"
       ]

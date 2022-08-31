@@ -7,7 +7,7 @@
   "appType": "executable",
   "requires": [
     {
-      "url": "https://github.com/EficodeEntDemo/atlassian_templates.git"
+      "url": "https://github.com/EficodeRND/atlassian_templates.git"
     }
   ],
   "inputs": [
