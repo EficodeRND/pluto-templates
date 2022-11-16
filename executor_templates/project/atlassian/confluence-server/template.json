@@ -31,7 +31,7 @@
       "field": "PROJECT_NAME"
     },
     {
-      "name": "Jira user name",
+      "name": "Confluence user name",
       "description": "Confluence user name for creating the space",
       "target": "executor",
       "type": "text",
