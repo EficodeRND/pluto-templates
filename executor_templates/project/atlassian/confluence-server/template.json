@@ -1,0 +1,81 @@
+{
+  "name": "Create Confluence space",
+  "description": "Create a Confluence space",
+  "documentation": [],
+  "appType": "executable",
+  "requires": [
+    {
+      "url": "https://github.com/EficodeRND/atlassian_templates.git"
+    }
+  ],
+  "inputs": [
+    {
+      "name": "Confluence Url",
+      "description": "URL to the Confluence server",
+      "target": "executor",
+      "type": "text",
+      "field": "CONFLUENCE_URL"
+    },
+    {
+      "name": "Project key",
+      "description": "Project key for the new Confluence project",
+      "target": "executor",
+      "type": "text",
+      "field": "PROJECT_KEY"
+    },
+    {
+      "name": "Project name",
+      "description": "Confluence project name",
+      "target": "executor",
+      "type": "text",
+      "field": "PROJECT_NAME"
+    },
+    {
+      "name": "Jira user name",
+      "description": "Confluence user name for creating the space",
+      "target": "executor",
+      "type": "text",
+      "field": "CONFLUENCE_USERNAME"
+    },
+    {
+      "name": "Confluence token",
+      "description": "The personal access token (PAT) for authenticating in Confluence",
+      "target": "executor",
+      "type": "password",
+      "field": "CONFLUENCE_TOKEN"
+    },
+    {
+      "name": "Project lead",
+      "description": "Confluence user name of the project lead",
+      "target": "executor",
+      "type": "text",
+      "field": "PROJECT_LEAD"
+    },
+    {
+      "name": "Category",
+      "description": "Category for the space",
+      "target": "executor",
+      "type": "text",
+      "field": "CATEGORY"
+    },
+    {
+      "name": "User group",
+      "description": "Name of the user group for permissions",
+      "target": "executor",
+      "type": "text",
+      "field": "USER_GROUP"
+    },
+    {
+      "name": "Template space key",
+      "description": "Key of the Confluence space to use as template for creating a new one",
+      "target": "executor",
+      "type": "text",
+      "field": "TEMPLATE_SPACE_KEY"
+    }
+  ],
+  "executable": "create_confluence_workspace.py",
+  "postActions": {
+    "all": [],
+    "GitHub": []
+  }
+}
