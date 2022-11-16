@@ -63,14 +63,16 @@
       "description": "Name of the user group for permissions",
       "target": "executor",
       "type": "text",
-      "field": "USER_GROUP"
+      "field": "USER_GROUP",
+      "optional": true
     },
     {
       "name": "Template space key",
       "description": "Key of the Confluence space to use as template for creating a new one",
       "target": "executor",
       "type": "text",
-      "field": "TEMPLATE_SPACE_KEY"
+      "field": "TEMPLATE_SPACE_KEY",
+      "optional": true
     }
   ],
   "executable": "create_confluence_workspace.py",
